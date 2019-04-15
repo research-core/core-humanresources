@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+
+  <style>
+
+    @page {
+        size: A4;
+    }
+
+    ul {
+      margin: 0px;
+    }
+
+    li {
+      margin-bottom: .5em;
+      margin-left: -25px;
+    }
+
+    li:last-child {
+      margin-bottom: 0em;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    table td, th {
+      border: 1px solid black;
+      border-right: 0px;
+      border-top: 0px;
+      padding: 10px;
+      border-color: #DDD;
+    }
+
+    table th{
+      text-align: left;
+      vertical-align: top;
+      border-left: 0px;
+
+    }
+
+    table.details th {
+      min-width: 220px;
+      width: 220px;
+    }
+
+    table.signature th{
+      border-bottom: 0px;
+
+    }
+
+    table.signature td, table.signature th{
+      border-left: 0px;
+      border-right: 0px;
+      min-width: auto;
+    }
+
+    body{
+      background-color: #DDD;
+      font-family: Verdana, Geneva, sans-serif;
+      font-size: 12px;
+    }
+
+    .page{
+      width: 700px;
+      background-color: white;
+      padding: 20px;
+      margin: auto auto;
+    }
+  </style>
+
+
+</head>
+
+<body>
+
+<div class='page' >
+
+  <img src="/static/logo_pt.png" style="float: right;">
+
+   <br></br>
+   <br></br>
+   <p>{{proposal_date}}</p>
+
+   <table class='details' >
+    <tr>
+      <th>Name</th>
+      <td>{{ proposal.personname }}</td>
+    </tr>
+    <tr>
+      <th>Position</th>
+      <td>{{ proposal.position }}</td>
+    </tr>
+    <tr>
+      <th>Scientific Work Description</th>
+      <td>{{proposal.contractproposal_scientificdesc|linebreaksbr}}</td>
+    </tr>
+    <tr>
+      <th>Supervisor</th>
+      <td>{{proposal.supervisor}}</td>
+    </tr>
+    <tr>
+      <th>Starting Date</th>
+      <td>{{proposal.contractproposal_start}}</td>
+    </tr>
+    <tr>
+      <th>Duration</th>
+      {% with nmonths=proposal.contractproposal_duration ndays=proposal.contractproposal_duration_additional_days %}
+      <td>{{nmonths}} month{{ nmonths|pluralize }}{% if ndays > 0 %} and {{ndays}} day{{ ndays|pluralize }}{% endif%}</td>
+      {% endwith%}
+    </tr>
+    <tr>
+      <th>Monthly Payment</th>
+      <td>{{proposal.currency}} {{proposal.contractproposal_salary}} €</td>
+    </tr>
+    <tr>
+      <th>Type of Fellowship</th>
+      <td>{{proposal.typeoffellowship}}</td>
+    </tr>
+    <tr>
+      <th>Cost Center(s) / Project(s)</th>
+      <td>
+        <ul>
+          {% for pay in proposal.payment_set.all %}
+          <li>
+              {{pay.financeproject}}
+              (
+                €{{pay.payment_amount}} monthly
+                {% if pay.payment_nmonths %}
+                  during {{pay.payment_numberofmonths}}
+                {% endif %}
+              ).
+          </li>
+          {% endfor %}
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th>Approved by OSP</th>
+      <td></td>
+    </tr>
+    <tr>
+      <th>Requisition Number</th>
+      <td>
+        {% for pay in proposal.payment_set.all %}<br/><br/>{% endfor %}
+      </td>
+    </tr>
+    <tr>
+      <th>Approved by CR Financial Manager</th>
+      <td></td>
+    </tr>
+    <tr>
+      <th>Approved by CF Financial Manager</th>
+      <td></td>
+    </tr>
+    <tr>
+      <th>Approved by Research Direction</th>
+      <td></td>
+    </tr>
+  </table>
+
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <table class="signature" >
+    <tr>
+      <th style="width: 150px;" >Approved by CF Board</th>
+      <td></td>
+      <th style="width: 40px;" >Date:</th>
+      <td></td>
+    </tr>
+  </table>
+
+</div>
+
+<!-- <script type="text/javascript"> -->
+<!--   window.print() -->
+<!-- </script> -->
+
+</body>
+</html>

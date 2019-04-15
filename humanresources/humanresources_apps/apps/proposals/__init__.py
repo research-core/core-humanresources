@@ -1,0 +1,1 @@
+from .proposals_list import ContractProposalsListWidget

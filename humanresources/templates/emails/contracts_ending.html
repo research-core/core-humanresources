@@ -1,0 +1,92 @@
+{% if contracts_ending %}
+
+<div style="background-color:#f5f5f5;margin:0px;padding:30px;font:Arial;font-family:Arial,Helvetica,Sans-serif" bgcolor="#f5f5f5">
+
+    <table width="800" border="0" align="center" cellpadding="0" cellspacing="0" bgcolor="#fff" style="margin: auto auto;padding:0px;border-collapse:collapse; color:#002d40">
+        <tbody>
+            <tr>
+                <td width="800" cellpadding="0" cellspacing="0" border="" valign="top" style="padding:20px;margin:20px;border:0px;border-collapse:collapse;max-width:800px">
+
+                    <span style="font-size:18px;line-height:22px;font-weight:bold; text-align:center;text-transform:uppercase;">
+                        <span style="color:#66cccc">CNP CORE - Contracts ending alert</span>
+                    </span>
+                    <br />
+                    <br />
+                    <br />
+
+                    <p style="margin:0px;padding:0px">Dear {{ pi }},</p>
+                    <br />
+                    <br />
+                    <p style="margin:0px;padding:0px">
+                        Please be aware that the next ongoing fellowship contracts will end within the next {{ deadline }} days.
+                    </p>
+                    <p style="margin:0px;padding:0px">
+                        Please let Admin know if and under which terms it should be renewed. You must do so by using
+                        the link in front of each fellow name.
+                    </p>
+                    <br />
+                    <p style="font-weight:bold; margin:0px;padding:0px">
+                        Please note that all proposals must be submitted imperatively up to 30 days prior to beginning
+                        date.
+                    </p>
+                    <br />
+                    <p style="margin:0px;padding:0px">Let us know if we can assist you any further.</p>
+
+                    <h2>Expiring contracts</h2>
+
+                    <table>
+                        <tr>
+                            <th>Person</th>
+                            <th>Contract ref.</th>
+                            <th>Contract ending</th>
+                        </tr>
+                        {% for contract in contracts_ending %}
+                        <tr>
+                            <td style="padding-left:20px;padding-right:20px;">
+                                {{ contract.person }}
+                            </td>
+                            <td style="padding-left:20px;padding-right:20px;"><a href='{{ link }}{{ contract.pk }}'
+                                    target='_blank'> {{ contract.contract_ref }}</a></td>
+                            <td style="padding-left:20px;padding-right:20px;{% if today > contract.contract_end %}color:red;{% endif %}">
+                                {{ contract.contract_end|date:"Y-m-d" }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                    <br />
+                    <br />
+                    <a href='http://cnp-intranet.champalimaud.pt/humanresources/contractproposal/' target='_blank'>
+                        Renew contracts here
+                    </a>
+
+                    <br />
+                    <br />
+                    <small style='color:orange'>
+                        <b>Note</b>: Expired contracts are not shown in the above table.
+                    </small>
+                    <br />
+                    <small style='color:red'><b>Note</b>: Expired dates are shown in red.</small>
+
+                    <br />
+                    <br />
+                    <p style="margin:0px;padding:0px">
+                        Thank you,<br />
+                        <br />
+                        <img src='http://neuro.fchampalimaud.org/static/cnp.png' />
+                    </p>
+                    <br />
+                    <p style="margin:0px;padding:0px;color: red;font-size:11px;">
+                        Please send an email to <a style="color:#66cccc; text-decoration:none;" href="mailto:admin.it@neuro.fchampalimaud.org">
+                            admin.it@neuro.fchampalimaud.org
+                        </a> if you are not entitled to see this message.
+                    </p>
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+{% else %}
+Nothing to report
+{% endif %}

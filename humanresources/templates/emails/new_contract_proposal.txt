@@ -1,0 +1,6 @@
+New Contract Proposal
+=====================
+
+A new contract proposal was submitted by {{ responsible }}.
+
+Link: {{ proposal_url }}
