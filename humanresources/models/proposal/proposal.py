@@ -75,7 +75,7 @@ class ContractProposal(StatusModel):
 
 
     contractproposal_scientificdesc = models.TextField('Scientific Work Description', blank=False, null=False, default='', help_text="Short mandatory description")
-    person                          = models.ForeignKey('Person', blank=True, null=True, on_delete=models.CASCADE)
+    person                          = models.ForeignKey('people.Person', blank=True, null=True, on_delete=models.CASCADE)
     typeoffellowship                = models.ForeignKey('TypeOfFellowship', blank=True, null=True, verbose_name='Type of contract', on_delete=models.CASCADE)
 
 
@@ -85,12 +85,12 @@ class ContractProposal(StatusModel):
 
     contract    = models.ForeignKey('Contract', blank=True, null=True, on_delete=models.SET_NULL)
 
-    supervisor  = models.ForeignKey('Person', verbose_name='Supervisor', related_name='where_am_i_supervisor', limit_choices_to={'djangouser__groups__name': settings.PROFILE_GROUP_RESPONSIBLE}, on_delete=models.CASCADE)
+    supervisor  = models.ForeignKey('people.Person', verbose_name='Supervisor', related_name='where_am_i_supervisor', limit_choices_to={'djangouser__groups__name': settings.PROFILE_GROUP_RESPONSIBLE}, on_delete=models.CASCADE)
     # supervisor_name = models.CharField(max_length=255)
     # supervisor_email = models.EmailField(max_length=255)
 
     position = models.ForeignKey(
-        to='Position',
+        to='people.Position',
         null=True,
         blank=True,
         on_delete=models.CASCADE,

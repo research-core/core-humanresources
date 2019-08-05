@@ -1,7 +1,7 @@
 from confapp import conf
 from pyforms_web.widgets.django import ModelAdminWidget
 
-from common.models import Permissions
+from permissions.models import Permission
 from humanresources.models import ContractProposal
 
 from .proposals_form import EditContractProposalFormWidget

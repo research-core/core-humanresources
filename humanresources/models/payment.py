@@ -29,7 +29,7 @@ class Payment(models.Model):
 
     contractproposal = models.ForeignKey('ContractProposal', verbose_name='Proposal', on_delete=models.CASCADE) #: Fk to the Contract of this payout
     financeproject = models.ForeignKey(
-        'finance.FinanceProject',
+        'finance.Project',
         verbose_name='Finance Project',
         limit_choices_to={'expensecode__expensecode_number': '01'},
         on_delete=models.CASCADE

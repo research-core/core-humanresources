@@ -5,7 +5,8 @@ from django.core.mail import EmailMessage
 from django.contrib.auth.models import Group
 from django.template.loader import render_to_string
 from django.core.management.base import BaseCommand
-from humanresources.models import Contract, ContractProposal, Person
+from humanresources.models import Contract, ContractProposal
+from people.models import Person
 
 
 

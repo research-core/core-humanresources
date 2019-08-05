@@ -117,7 +117,7 @@ class Command(BaseCommand):
 
         data = []
 
-        Person = apps.get_model('humanresources', 'Person')
+        Person = apps.get_model('people', 'Person')
         Group = apps.get_model('research', 'Group')
 
         # get all active people

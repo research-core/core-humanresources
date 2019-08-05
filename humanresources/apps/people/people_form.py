@@ -15,10 +15,10 @@ from pyforms.basewidget import no_columns
 from pyforms.controls import ControlImg
 from pyforms.controls import ControlButton
 
-from common.models import InstitutionAffiliation
+from humanresources.models import InstitutionAffiliation
 from humanresources.models import AcademicCareer
-from humanresources.models import Person
-from research.models import GroupMember
+from people.models import Person
+from people.models import GroupMember
 from .privateinfo import PrivateInfoFormWidget
 from ..proposals import ContractProposalsListWidget
 from ..contracts import ContractsListWidget

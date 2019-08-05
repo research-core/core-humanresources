@@ -1,5 +1,5 @@
 from django.contrib.contenttypes.models import ContentType
-from common.models         import Permissions
+from permissions.models         import Permission
 
 from humanresources.models import Person
 

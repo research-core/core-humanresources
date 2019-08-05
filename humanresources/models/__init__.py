@@ -9,8 +9,6 @@ from .id_document import IDDocument
 from .institution import Institution
 from .payment import Payment
 from .payout import Payout
-from .person.person import Person
-from .position import Position
 from .privateinfo.privateinfo import PrivateInfo
 from .scientific_area import ScientificArea
 from .type_of_fellowship import TypeOfFellowship

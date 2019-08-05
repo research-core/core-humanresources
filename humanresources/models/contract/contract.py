@@ -9,7 +9,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.utils    import timezone
-from common.models import Permissions
+from permissions.models import Permission
 
 try:
     # django 2.0
@@ -55,18 +55,18 @@ class Contract(models.Model):
 
 
     typeoffellowship = models.ForeignKey('TypeOfFellowship', blank=True, null=True, verbose_name='Type of fellowship', on_delete=models.CASCADE)
-    person = models.ForeignKey('Person', on_delete=models.CASCADE)
+    person = models.ForeignKey('people.Person', on_delete=models.CASCADE)
     financinginst = models.ForeignKey('FinancingInst', verbose_name='Paid by', blank=True, null=True, on_delete=models.CASCADE)
 
     position = models.ForeignKey(
-        to='Position',
+        to='people.Position',
         null=True,
         blank=True,
         on_delete=models.CASCADE,
     )
 
     supervisor = models.ForeignKey(
-        to='humanresources.Person',
+        to='people.Person',
         related_name='supervisor',
         null=True,
         default=None,
@@ -193,7 +193,7 @@ class Contract(models.Model):
     #     #If yes, then the user can see all the contracts from his lab. if the user is a super user then
     #     # he will see all the contract s in the database
 
-    #     from research.models import Group as ResearchGroup
+    #     from people.models import Group as ResearchGroup
     #     user = request.user
 
     #     if user.is_superuser: return qs

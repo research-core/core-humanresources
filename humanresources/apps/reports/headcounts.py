@@ -12,7 +12,7 @@ from pyforms.controls import ControlQueryList
 from django.contrib.auth.models import Group
 from django.db.models import Count, Sum
 from humanresources.models import Payout
-from supplier.models import FinanceProject, FinanceCostCenter
+from finance.models import Project, CostCenter
 
 from pyforms_web.organizers import segment, no_columns
 from confapp import conf
@@ -37,8 +37,8 @@ class HeadcountsReports(BaseWidget):
         self._start     = ControlDate('Start')
         self._end       = ControlDate('End')
         self._groups      = ControlAutoComplete('Groups', multiple=True, queryset=Group.objects.all() )
-        self._costcenters = ControlAutoComplete('Cost centers', multiple=True, queryset=FinanceCostCenter.objects.all() )
-        self._projects    = ControlAutoComplete('Projects', multiple=True, queryset=FinanceProject.objects.all() )
+        self._costcenters = ControlAutoComplete('Cost centers', multiple=True, queryset=CostCenter.objects.all())
+        self._projects    = ControlAutoComplete('Projects', multiple=True, queryset=Project.objects.all())
         self._applybtn    = ControlButton('Apply', default=self.populate_report)
 
         self._updategraphs_btn = ControlButton('Update graphs', default=self.populate_graphs)

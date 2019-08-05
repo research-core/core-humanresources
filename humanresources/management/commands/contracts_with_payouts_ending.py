@@ -9,7 +9,8 @@ from django.utils import timezone
 from django.conf import settings
 from django.contrib.auth import models
 from django.core.mail import EmailMessage
-from humanresources.models import Payout, Contract, Person, Payout
+from humanresources.models import Payout, Contract, Payout
+from people.models import Person
 from django.template.loader import render_to_string
 from django.db.models import *
 from django.core.management.base import BaseCommand

@@ -7,11 +7,11 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import Group as AuthGroup
 
-from supplier.models import Supplier
-from supplier.models import ExpenseCode
-from supplier.models import Order
-from supplier.models import OrderExpenseCode
-from supplier.models import Currency
+from suppliers.models import Supplier
+from finance.models import ExpenseCode
+from orders.models import Order
+from orders.models import OrderExpenseCode
+from common.models import Currency
 
 
 class Payout(models.Model):
@@ -27,10 +27,10 @@ class Payout(models.Model):
     #hidden column, to be updated automaticly
     total  = models.DecimalField('Total amount', max_digits=15, decimal_places=2, blank=True, default=0)
 
-    order = models.ForeignKey('finance.Order', verbose_name='Order', blank=True, null=True, on_delete=models.CASCADE)  #: Fk to the order of this payout
+    order = models.ForeignKey('orders.Order', verbose_name='Order', blank=True, null=True, on_delete=models.CASCADE)  #: Fk to the order of this payout
     contract = models.ForeignKey('Contract', verbose_name='Contract', on_delete=models.CASCADE)  #: Fk to the Contract of this payout
     financeproject = models.ForeignKey(
-        'finance.FinanceProject',
+        'finance.Project',
         verbose_name='Finance Project',
         limit_choices_to={'expensecode__expensecode_number': '01'},
         on_delete=models.CASCADE,

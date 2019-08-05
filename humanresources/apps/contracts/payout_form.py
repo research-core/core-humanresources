@@ -8,7 +8,7 @@ from pyforms_web.web.middleware import PyFormsMiddleware
 from pyforms_web.widgets.django import ModelFormWidget
 
 from humanresources.models import Payout
-from supplier.models import Currency
+from common.models import Currency
 
 from frontend.supplier_apps.apps.orders.orders_form import OrderEditFormWidget
 

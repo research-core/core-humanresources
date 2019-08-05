@@ -2,8 +2,8 @@ from django.db import models
 from django.db.models import Q, F
 from django.utils import timezone
 
-from humanresources.models import Person
-from common.models import Permissions
+from people.models import Person
+from permissions.models import Permission
 from core_utils.models_functions import MonthsAdd, DaysAdd
 
 

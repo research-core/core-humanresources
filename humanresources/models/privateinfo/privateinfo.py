@@ -43,7 +43,7 @@ class PrivateInfo(models.Model):
         ],
     )
 
-    person       = models.OneToOneField('Person', verbose_name='Person', on_delete=models.CASCADE)    #: Name
+    person       = models.OneToOneField('people.Person', verbose_name='Person', on_delete=models.CASCADE)    #: Name
     iddocument   = models.ForeignKey('IDDocument', blank=True, null=True, verbose_name='ID Document', on_delete=models.CASCADE)      #: Document Id in the private info
     citizenship  = models.ForeignKey('common.Citizenship', blank=True, null=True, on_delete=models.CASCADE)    #: Citizenship e.g. American
     birthcity    = models.ForeignKey('common.City', verbose_name='Birth City', blank=True, null=True, on_delete=models.CASCADE)              #: Birth city of a Person in the private info form

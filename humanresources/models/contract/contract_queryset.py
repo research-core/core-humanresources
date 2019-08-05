@@ -6,12 +6,9 @@ from django.db.models import Q, F
 from django.utils import timezone
 from django.contrib.auth.models import User
 
-from humanresources.models import Person
-from common.models         import Permissions
+from people.models import Person
+from permissions.models         import Permission
 from humanresources.models import ContractProposal
-
-from common.models import Permissions
-
 
 class ContractQuerySet(models.QuerySet):
 

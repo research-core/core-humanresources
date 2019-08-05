@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models import Q
 
-from common.models import Permissions
+from permissions.models import Permission
 
 
 class PrivateInfoQuerySet(models.QuerySet):

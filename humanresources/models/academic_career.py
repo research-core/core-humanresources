@@ -11,7 +11,7 @@ class AcademicCareer(models.Model):
     graduation_year = models.IntegerField(null=True)
 
     person = models.ForeignKey(
-        to='Person',
+        to='people.Person',
         on_delete=models.CASCADE,
     )
 

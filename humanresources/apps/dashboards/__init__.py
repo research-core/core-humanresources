@@ -9,7 +9,7 @@ from pyforms.controls import ControlQueryList
 from pyforms.controls import ControlQueryCombo
 
 from humanresources.models import Contract
-from research.models import Group as ResearchGroup
+from people.models import Group as ResearchGroup
 
 class ExpiringContracts(BaseWidget):
 

@@ -30,4 +30,5 @@ urlpatterns = [
     #     views.print_contract_proposal,
     #     name='print_contract_proposal',
     # ),
+    path('print_proposal/<int:proposal_id>/', views.print_proposal, name='print-proposal'),
 ]

@@ -10,7 +10,7 @@ from .contracts_form import ContractEditFormWidget
 from .contracts_create import ContractCreateFormWidget
 
 from django.contrib.contenttypes.models import ContentType
-from common.models         import Permissions
+from permissions.models         import Permission
 
 
 class ContractsListWidget(ModelAdminWidget):
