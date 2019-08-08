@@ -20,30 +20,30 @@ class PrivateInfoFormWidget(ModelFormWidget):
         ('birthcountry', 'birthcity', 'citizenship'),
         segment(
             'h3:Documentation',
-            ('iddocument', 'privateinfo_docnumber', 'privateinfo_docexpiration'),
-            ('nif', 'privateinfo_socialsecuritynum')
+            ('iddoc', 'iddoc_number', 'iddoc_expiration'),
+            ('nif', 'socialsecurity_number')
         ),
         segment(
             'h3:Health Insurance',
-            ('privateinfo_healthinsurance', 'privateinfo_healthinsurancestart'),
+            ('has_health_insurance', 'health_insurance_start'),
         ),
         segment(
             'h3:Bank Information',
-            'privateinfo_bankinfo',
+            'bank_info',
             'iban',
             css='secondary'
         ),
-        'privateinfo_address',
-        'privateinfo_cv',
+        'address',
+        'curriculum_vitae',
     ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # some tweaks before migrating the model
-        self.privateinfo_healthinsurance.label = "Has insurance plan?"
-        self.privateinfo_bankinfo.label = ""
-        self.iddocument.label = "ID Document"
+        self.has_health_insurance.label = "Has insurance plan?"
+        self.bank_info.label = ""
+        self.iddoc.label = "ID Document"
         self.nif.label = "NIF"
 
     def __has_permissions(self):

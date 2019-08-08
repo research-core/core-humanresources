@@ -53,12 +53,12 @@ class ExpiringContracts(BaseWidget):
         
         contracts = Contract.objects.all()
         contracts = contracts.extra(where=[
-            "ADDDATE(ADDDATE(contract_start, INTERVAL contract_duration MONTH), INTERVAL contract_duration_additional_days-1 DAY) BETWEEN '{0}' AND '{1}'".format(
+            "ADDDATE(ADDDATE(start, INTERVAL months_duration MONTH), INTERVAL days_duration-1 DAY) BETWEEN '{0}' AND '{1}'".format(
                 timezone.now().date(), 
                 end_date
             )
         ])
-        contracts = contracts.filter(warning_contract_ending=True) # alert only the contracts with the flag to send warning emails
+        contracts = contracts.filter(warn_when_ending=True) # alert only the contracts with the flag to send warning emails
         contracts = contracts.filter(start__lte = timezone.now().date())
         contracts = contracts.filter(end__gte = timezone.now().date())
 

@@ -66,7 +66,7 @@ class ContractEditFormWidget(ModelFormWidget):
     FIELDSETS = [
         'h3:Identification',
         segment(
-            ('ref', '_openproposal_btn', 'warning_contract_ending'),
+            ('ref', '_openproposal_btn', 'warn_when_ending'),
             ('person', 'supervisor')
         ),
         'h3:Contract conditions',
@@ -74,7 +74,7 @@ class ContractEditFormWidget(ModelFormWidget):
             ('start', 'months_duration',
              'days_duration', 'end'),
             ('salary', ),
-            ('socialsecurity_is_paid', 'social_security'),
+            ('socialsecurity_pay', 'socialsecurity_from'),
             ('socialsecurity_start', 'socialsecurity_end')
         ),
         'h3:Function',

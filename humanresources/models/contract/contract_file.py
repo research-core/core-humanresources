@@ -3,10 +3,11 @@ from django.db import models
 
 
 class ContractFile(models.Model):
-    created_on = models.DateField('Created on', auto_now_add=True)
-    file = models.FileField(upload_to='contract/contractfile', max_length=255)
 
+    file       = models.FileField(upload_to='contract/contractfile', max_length=255)
+    created_on = models.DateField('Created on', auto_now_add=True)
     created_by = models.ForeignKey(User, verbose_name='Created by', on_delete=models.CASCADE)
+
     contract = models.ForeignKey('Contract', blank=True, null=True, on_delete=models.CASCADE)
 
     class Meta:

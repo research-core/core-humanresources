@@ -12,14 +12,14 @@ class ContractCreateFormWidget(ModelFormWidget):
         'h3:Identification',
         segment(
             ('ref','supervisor'),
-            ('person', 'warning_contract_ending')
+            ('person', 'warn_when_ending')
         ),
         'h3:Contract conditions',
         segment(
             ('start', 'months_duration',
              'days_duration', 'end'),
             ('salary', ),
-            ('socialsecurity_is_paid', 'social_security'),
+            ('socialsecurity_pay', 'socialsecurity_from'),
             ('socialsecurity_start', 'socialsecurity_end')
         ),
         'h3:Function',

@@ -16,9 +16,7 @@ class PrivateInfoQuerySet(models.QuerySet):
 
         This is by default what everyone sees if they have no permissions.
         """
-        return self.filter(
-            Q(person__auth_user=user)
-        ).distinct()
+        return self.filter( Q(person__auth_user=user) ).distinct()
 
     def managed_by(self, user, required_codenames):
         """

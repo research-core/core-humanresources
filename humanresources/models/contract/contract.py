@@ -37,43 +37,35 @@ class Contract(models.Model):
     Example: salary, affiliation
     """
 
-    # FIXME clean up fields
-    start                  = models.DateField('Start date')              #: Start date of the function and affiliation
-    months_duration               = models.IntegerField('Duration', help_text='Months')
-    days_duration = models.IntegerField('Days', help_text='Additional days', default=0)
-    end                    = models.DateField('End date') # Temporary
-    salary                 = models.DecimalField('Monthly Salary', max_digits=15, decimal_places=2)  #: salary of the Person
-    fellowship_ref          = models.CharField('Fellowship ref.', max_length=100, blank=True, null=True, )   #: Scholarship refrences of a Person
-    ref                    = models.CharField('Contract ref.', max_length=50, blank=True, null=True, )   #: Contract refrences of a Person
-    social_security = models.CharField('Soc. Sec', blank=True, null=True, max_length=4, choices=(
-            ('G', 'Grants'), ('CF', 'CF'), ('CFRC', 'CF Running costs')))  #: Soc. Sec number of a Person
+    SOCIAL_SECURITY_FROM = [
+        ('G', 'Grants'),
+        ('I', 'Institution'),
+        ('R', 'Running costs')
+    ]
 
-    socialsecurity_is_paid     = models.NullBooleanField('Paying Social Security', blank=True, null=True, default=None, )
-    socialsecurity_start    = models.DateField('Soc. Sec. Start date', blank=True, null=True, )
-    socialsecurity_end      = models.DateField('Soc. Sec. End date', blank=True, null=True, )
-    description         = models.TextField('Scientific Work Description', blank=True, null=True, default='')
-    notes                  = models.TextField('Notes', blank=True, null=True, default='')
-    warning_contract_ending           = models.BooleanField('Warn when the contract is ending', default=True, help_text='Send an alert warning the end of the contract')
+    warn_when_ending = models.BooleanField('Warn when the contract is ending', default=True,
+                                           help_text='Send an alert warning the end of the contract')
+    start           = models.DateField('Start date')
+    months_duration = models.IntegerField('Duration', help_text='Months')
+    days_duration   = models.IntegerField('Days', help_text='Additional days', default=0)
+    end             = models.DateField('End date')
+    salary          = models.DecimalField('Monthly Salary', max_digits=15, decimal_places=2)
+    fellowship_ref  = models.CharField('Fellowship ref.', max_length=100, blank=True, null=True)
+    ref             = models.CharField('Contract ref.', max_length=50, blank=True, null=True, )
+    description     = models.TextField('Scientific Work Description', blank=True, null=True, default='')
+    notes           = models.TextField('Notes', blank=True, null=True, default='')
 
+    socialsecurity_from  = models.CharField('Soc. Sec', blank=True, null=True, max_length=1, choices=SOCIAL_SECURITY_FROM)
+    socialsecurity_pay   = models.NullBooleanField('Paying Social Security', blank=True, null=True, default=None, )
+    socialsecurity_start = models.DateField('Soc. Sec. Start date', blank=True, null=True, )
+    socialsecurity_end   = models.DateField('Soc. Sec. End date', blank=True, null=True, )
 
     fellowship_type = models.ForeignKey('humanresources.FellowshipType', blank=True, null=True, verbose_name='Type of fellowship', on_delete=models.CASCADE)
-    person = models.ForeignKey('people.Person', on_delete=models.CASCADE)
-
-    position = models.ForeignKey(
-        to='people.Position',
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-    )
-
-    supervisor = models.ForeignKey(
-        to='people.Person',
-        related_name='supervisor',
-        null=True,
-        default=None,
-        on_delete=models.CASCADE,
-        limit_choices_to={'auth_user__groups__name': settings.PROFILE_GROUP_RESPONSIBLE, 'active':True},
-    )
+    person          = models.ForeignKey('people.Person', on_delete=models.CASCADE)
+    position        = models.ForeignKey('people.Position', null=True, blank=True, on_delete=models.CASCADE)
+    supervisor      = models.ForeignKey('people.Person', related_name='contracts_supervisor', null=True, default=None,
+                        on_delete=models.CASCADE,
+                        limit_choices_to={'auth_user__groups__name': settings.PROFILE_GROUP_RESPONSIBLE, 'active':True})
 
     objects = ContractQuerySet.as_manager()
 

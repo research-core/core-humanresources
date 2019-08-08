@@ -16,19 +16,17 @@ class PrivateInfo(models.Model):
     Example: Salary, Adress
     """
 
-    privateinfo_id = models.AutoField(primary_key=True)             #: ID
-    privateinfo_docnumber = models.CharField('Document number', max_length=500, blank=True, null=True,) #: Document uploaded to the private info page
-    privateinfo_docexpiration = models.DateField('Expiration date', blank=True, null=True,)
-    privateinfo_socialsecuritynum = models.CharField('Social Security Number', max_length=20, blank=True, null=True,)
-    privateinfo_address = models.TextField('Address', blank=True, null=True, default='')    #: A Person Adress in the Private Info form
-    privateinfo_cv = models.FileField('Curriculum Vitae', upload_to="uploads/privateinfo/privateinfo_cv", blank=True, null=True)       #: A Person CV file uploaded to the private info form
-    privateinfo_bankinfo = models.TextField('Bank Info', blank=True, null=True, default='')    #: Bank Information of a Person in the system
-    privateinfo_healthinsurance = models.NullBooleanField('Health Insurance')
-    privateinfo_healthinsurancestart = models.DateField('Start date', blank=True, null=True,)
+    iddoc            = models.ForeignKey('IDDocument', blank=True, null=True, verbose_name='ID Document',on_delete=models.CASCADE)
+    iddoc_number     = models.CharField('Document number', max_length=500, blank=True, null=True)
+    iddoc_expiration = models.DateField('Expiration date', blank=True, null=True)
+    address          = models.TextField('Address', blank=True, null=True, default='')
+    curriculum_vitae = models.FileField('Curriculum Vitae', upload_to="uploads/privateinfo/privateinfo_cv", blank=True, null=True)
+    bank_info        = models.TextField('Bank Info', blank=True, null=True, default='')
+    socialsecurity_number  = models.CharField('Social Security Number', max_length=20, blank=True, null=True)
+    has_health_insurance   = models.NullBooleanField('Health Insurance')
+    health_insurance_start = models.DateField('Start date', blank=True, null=True)
 
-    iban = IBANField(
-        verbose_name="IBAN", blank=True, include_countries=("PT",)
-    )
+    iban = IBANField(verbose_name="IBAN", blank=True, include_countries=("PT",))
 
     nif = models.CharField(
         verbose_name='NIF',
@@ -44,7 +42,6 @@ class PrivateInfo(models.Model):
     )
 
     person       = models.OneToOneField('people.Person', verbose_name='Person', on_delete=models.CASCADE)    #: Name
-    iddocument   = models.ForeignKey('IDDocument', blank=True, null=True, verbose_name='ID Document', on_delete=models.CASCADE)      #: Document Id in the private info
     citizenship  = models.ForeignKey('common.Citizenship', blank=True, null=True, on_delete=models.CASCADE)    #: Citizenship e.g. American
     birthcity    = models.ForeignKey('common.City', verbose_name='Birth City', blank=True, null=True, on_delete=models.CASCADE)              #: Birth city of a Person in the private info form
     birthcountry = models.ForeignKey('common.Country', verbose_name='Birth Country', blank=True, null=True, on_delete=models.CASCADE)     #: Birth country of a Person in the Private Info form
@@ -78,9 +75,8 @@ class PrivateInfo(models.Model):
 
     class Meta:
         ordering = ['person', ]
-        verbose_name = "Private Info"
-        verbose_name_plural = "Private Info"
-        app_label = 'humanresources'
+        verbose_name = "Private info"
+        verbose_name_plural = "Private info"
 
     def __str__(self):
         return self.person.name
