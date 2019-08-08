@@ -10,18 +10,22 @@ from pyforms_web.widgets.django import ModelFormWidget
 from humanresources.models import Payout
 from common.models import Currency
 
-from frontend.supplier_apps.apps.orders.orders_form import OrderEditFormWidget
 
+try:
+    from orders.apps.orders.orders_form import OrderEditFormWidget
+    orders_module_installed = 'orders' in settings.INSTALLED_APPS
+except:
+    orders_module_installed = False
 
 class PayoutEditForm(ModelFormWidget):
     MODEL = Payout
     TITLE = 'Payout'
 
-    READ_ONLY = ['reqNum', 'totalAmount', 'order', 'total']
+    READ_ONLY = ['requisition_number', 'total_amount', 'order', 'total']
 
     FIELDSETS = [
-        'financeproject',
-        ('payout_start', 'payout_end', 'payout_amount', 'total'),
+        'project',
+        ('start', 'end', 'amount', 'total'),
         ('order', '_reqnumber', '_reqdate', '_reqvalue'),
         '_order_btn'
     ]
@@ -31,10 +35,9 @@ class PayoutEditForm(ModelFormWidget):
 
         self._reqnumber = ControlInteger('Requision number')
         self._reqdate = ControlDate('Requision date')
-        #self._currency  = ControlAutoComplete('Currency', queryset=Currency.objects.all() )
         self._order_btn = ControlButton(
             'Order', default=self.__order_btn_evt, label_visible=False, css='basic')
-        self._reqvalue = ControlText('Requision value', readonly=True)
+        self._reqvalue = ControlText('Requisition value', readonly=True)
 
         self.order.hide()
         self._reqnumber.hide()
@@ -45,9 +48,9 @@ class PayoutEditForm(ModelFormWidget):
         if self.model_object:
             order = self.model_object.order
             if order is not None:
-                self._reqnumber.value = order.order_reqnum
-                self._reqdate.value = order.order_reqdate
-                self._reqvalue.value = order.order_amount
+                self._reqnumber.value = order.requisition_number
+                self._reqdate.value = order.requisition_date
+                self._reqvalue.value = order.amount
                 # try:
                 #self._currency.value = order.currency.pk
                 # except:
@@ -59,6 +62,9 @@ class PayoutEditForm(ModelFormWidget):
                 self._reqvalue.show()
 
     def __order_btn_evt(self):
+        if not orders_module_installed:
+            return
+
         obj = self.model_object
         if obj.order:
             OrderEditFormWidget(pk=obj.order.pk)
@@ -72,8 +78,8 @@ class PayoutEditForm(ModelFormWidget):
         res = super().save_event(obj, new_object)
 
         if obj and obj.order:
-            obj.order.order_reqnum = self._reqnumber.value
-            obj.order.order_reqdate = self._reqdate.value
+            obj.order.requisition_number = self._reqnumber.value
+            obj.order.requisition_date = self._reqdate.value
             obj.order.currency = Currency.objects.get(currency_name=settings.DEFAULT_CURRENCY_NAME)
             obj.order.save()
             self.order.value = str(obj.order)

@@ -23,26 +23,22 @@ class Payment(models.Model):
     Represents a payout information for the contract proposal
     """
 
-    payment_id = models.AutoField(primary_key=True)  #: ID
-    payment_amount = models.DecimalField('Monthly amount', blank=False, null=False, max_digits=15, decimal_places=2)#: FinanceProject.amount=sum(FinanceProjects.Payout)
-    payment_nmonths = models.IntegerField('Use this finance project for', blank=True, null=True, default=None, choices=MONTHS_CHOICES )
+    amount   = models.DecimalField('Monthly amount', blank=False, null=False, max_digits=15, decimal_places=2)
+    n_months = models.IntegerField('Use this finance project for', blank=True, null=True, default=None, choices=MONTHS_CHOICES)
 
-    contractproposal = models.ForeignKey('ContractProposal', verbose_name='Proposal', on_delete=models.CASCADE) #: Fk to the Contract of this payout
-    financeproject = models.ForeignKey(
-        'finance.Project',
-        verbose_name='Finance Project',
-        limit_choices_to={'expensecode__expensecode_number': '01'},
-        on_delete=models.CASCADE
-    )  #: project of the contract
+    proposal = models.ForeignKey('ContractProposal', verbose_name='Proposal', on_delete=models.CASCADE)
+    project  = models.ForeignKey('finance.Project',  verbose_name='Finance Project',
+                    limit_choices_to = {'expensecode__number': '01'},
+                    on_delete = models.CASCADE
+               )
+
 
     class Meta:
         verbose_name = "Proposal payout"
         verbose_name_plural = "Proposal payouts"
-        # abstract = True
-        app_label = 'humanresources'
 
     def __str__(self):
         return 'Payout ID: %d' % self.pk
 
     def payment_numberofmonths(self):
-        return dict(MONTHS_CHOICES).get(self.payment_nmonths, '-')
+        return dict(MONTHS_CHOICES).get(self.n_months, '-')

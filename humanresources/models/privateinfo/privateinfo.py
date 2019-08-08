@@ -95,4 +95,4 @@ class PrivateInfo(models.Model):
         if user.groups.filter(name=settings.PROFILE_HUMAN_RESOURCES).exists():
             return qs
 
-        return qs.filter(person__djangouser=user).distinct()
+        return qs.filter(person__auth_user=user).distinct()

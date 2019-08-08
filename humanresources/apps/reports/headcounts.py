@@ -25,7 +25,7 @@ class HeadcountsReports(BaseWidget):
     TITLE = 'Report'
 
     LAYOUT_POSITION = conf.ORQUESTRA_HOME_FULL
-    ORQUESTRA_MENU = 'left>HumanResourcesOverviewWidget'
+    ORQUESTRA_MENU = 'middle-left>HRDashboard'
     ORQUESTRA_MENU_ORDER = 20
     ORQUESTRA_MENU_ICON  = 'chart line'
 
@@ -55,11 +55,11 @@ class HeadcountsReports(BaseWidget):
                 'C.C. Group', 'C.C.', 'Proj.', 'Grant'
             ],
             list_display = [
-                'contract__person', 'contract__contract_start', 'contract__contract_end', 'contract__contract_salary', 'contract__contract_ref',
-                'contract__position', 'contract__typeoffellowship', 'contract__contract_fellowshipref',
-                'total', 'payout_start', 'payout_end', 'order__order_reqnum', 'order__order_reqdate',
-                'financeproject__costcenter__group', 'financeproject__costcenter__costcenter_code', 'financeproject__financeproject_code',
-                'financeproject__grant'
+                'contract__person', 'contract__start', 'contract__end', 'contract__salary', 'contract__ref',
+                'contract__position', 'contract__fellowship_type', 'contract__fellowship_ref',
+                'total', 'start', 'end', 'order__requisition_number', 'order__requisition_date',
+                'project__costcenter__group', 'project__costcenter__code', 'project__code',
+                'project__grant'
             ] 
         )
 
@@ -104,36 +104,36 @@ class HeadcountsReports(BaseWidget):
         qs = self.get_queryset()
         
         qs0 = qs.values(
-            'financeproject__costcenter__costcenter_code','financeproject__financeproject_code','financeproject__financeproject_name'
-        ).annotate(total_amount=Sum('total')).order_by('financeproject')
+            'project__costcenter__code','project__code','project__name'
+        ).annotate(total_amount=Sum('total')).order_by('project')
         
         self._projs_pie.value = [( "{0} - {1} - {2}".format(
-            row['financeproject__costcenter__costcenter_code'], 
-            row['financeproject__financeproject_code'], 
-            row['financeproject__financeproject_name']
+            row['project__costcenter__code'],
+            row['project__code'],
+            row['project__name']
 
         ), row['total_amount']) for row in qs0]
 
 
         qs1 = qs.values(
-            'financeproject__costcenter__group__name'
-        ).annotate(total_amount=Sum('total')).order_by('financeproject__costcenter__group')
+            'project__costcenter__group__name'
+        ).annotate(total_amount=Sum('total')).order_by('project__costcenter__group')
         
-        self._grps_pie.value = [(row['financeproject__costcenter__group__name'], row['total_amount']) for row in qs1]
+        self._grps_pie.value = [(row['project__costcenter__group__name'], row['total_amount']) for row in qs1]
 
 
 
         qs2 = qs.values(
-            'contract__typeoffellowship__typeoffellowship_name'
-        ).annotate(total_amount=Sum('total')).order_by('contract__typeoffellowship')
+            'contract__fellowship_type__name'
+        ).annotate(total_amount=Sum('total')).order_by('contract__fellowship_type')
         
-        self._fellow_pie.value = [(row['contract__typeoffellowship__typeoffellowship_name'], row['total_amount']) for row in qs2]
+        self._fellow_pie.value = [(row['contract__fellowship_type__name'], row['total_amount']) for row in qs2]
 
 
         qs3 = qs.values(
-            'payout_start__year'
-        ).annotate(total_amount=Sum('total')).order_by('payout_start__year')
+            'start__year'
+        ).annotate(total_amount=Sum('total')).order_by('start__year')
         
-        self._amount_chart.value = {'Amount per date':[(row['payout_start__year'], row['total_amount']) for row in qs3]}
+        self._amount_chart.value = {'Amount per date':[(row['start__year'], row['total_amount']) for row in qs3]}
 
         

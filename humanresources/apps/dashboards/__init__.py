@@ -28,14 +28,14 @@ class ExpiringContracts(BaseWidget):
             'List', 
             list_display=[
                 'person',
-                'contract_ref',
-                'contract_end'
+                'ref',
+                'end'
             ]
         )
 
         self._group = ControlQueryCombo(
             'Group', 
-            queryset=ResearchGroup.objects.all().order_by('group_name'),
+            queryset=ResearchGroup.objects.all().order_by('name'),
             display_column='group_name',
             changed_event=self.__reload_contracts,
             allow_none=True
@@ -58,13 +58,13 @@ class ExpiringContracts(BaseWidget):
                 end_date
             )
         ])
-        contracts = contracts.filter(contract_warningemail=True) # alert only the contracts with the flag to send warning emails
-        contracts = contracts.filter(contract_start__lte = timezone.now().date())
-        contracts = contracts.filter(contract_end__gte = timezone.now().date())
+        contracts = contracts.filter(warning_contract_ending=True) # alert only the contracts with the flag to send warning emails
+        contracts = contracts.filter(start__lte = timezone.now().date())
+        contracts = contracts.filter(end__gte = timezone.now().date())
 
         if self._group.value:
             group = ResearchGroup.objects.get(pk=self._group.value)
             contracts = contracts.filter(person__group=group)
         
-        contracts.order_by('contract_end')
+        contracts.order_by('end')
         self._list.value = contracts

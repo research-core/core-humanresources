@@ -23,21 +23,21 @@ class ContractsListWidget(ModelAdminWidget):
 
     LIST_DISPLAY = [
         'person',
-        'contract_ref',
+        'ref',
         'position',
-        'contract_start',
-        'contract_end',
+        'start',
+        'end',
         'is_active'
     ]
 
     SEARCH_FIELDS = [
         'person__full_name__icontains',
-        'contract_ref__icontains'
+        'ref__icontains'
     ]
 
     LIST_FILTER = [
          # FIXME AttributeError: 'ManyToOneRel' object has no attribute 'get_limit_choices_to'
-         'payout__financeproject',
+         'payout__project',
     ]
 
     LIST_ROWS_PER_PAGE = 15
@@ -52,7 +52,7 @@ class ContractsListWidget(ModelAdminWidget):
 
     USE_DETAILS_TO_EDIT = False
 
-    ORQUESTRA_MENU = 'left'
+    ORQUESTRA_MENU = 'middle-left>HRDashboard'
     ORQUESTRA_MENU_ICON = 'file'
     ORQUESTRA_MENU_ORDER = 3
 

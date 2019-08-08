@@ -17,26 +17,27 @@ class ContractProposalsListWidget(ModelAdminWidget):
     MODEL = ContractProposal
 
     LIST_DISPLAY = [
-        'personname',
+        'person_name',
         'position',
-        'contractproposal_start',
+        'start',
         'end_date',
         'supervisor',
         'status_icon',
     ]
 
     SEARCH_FIELDS = (
-        'person__person_first__icontains',
-        'person__person_last__icontains',
-        'contractproposal_personname__icontains',
+        'person__first_name__icontains',
+        'person__last_name__icontains',
+        'person__full_name__icontains',
+        'person_name__icontains',
     )
 
     LIST_FILTER = [
         'status',
         'responsible',
         'supervisor',
-        'contractproposal_createdon',  # NOT WORKING?
-        'contractproposal_start',  # NOT WORKING?
+        'created_on',
+        'start',
     ]
 
     LIST_ROWS_PER_PAGE = 15
@@ -54,11 +55,11 @@ class ContractProposalsListWidget(ModelAdminWidget):
     # Orquestra Configuration
     # =========================================================================
 
-    LAYOUT_POSITION = conf.ORQUESTRA_HOME_FULL
+    LAYOUT_POSITION = conf.ORQUESTRA_HOME
 
     USE_DETAILS_TO_EDIT = False
 
-    ORQUESTRA_MENU = 'left'
+    ORQUESTRA_MENU = 'middle-left>HRDashboard'
     ORQUESTRA_MENU_ICON = 'file outline'
     ORQUESTRA_MENU_ORDER = 2
 
@@ -67,7 +68,7 @@ class ContractProposalsListWidget(ModelAdminWidget):
         if user.is_superuser:
             return True
 
-        return Permissions.objects.filter_by_auth_permissions(
+        return Permission.objects.filter_by_auth_permissions(
             user=user,
             model=cls.MODEL,
             codenames=['add', 'view', 'change'],

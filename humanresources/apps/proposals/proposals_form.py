@@ -12,10 +12,10 @@ from pyforms_web.widgets.django import ModelFormWidget
 
 from humanresources.models import ContractProposal
 from humanresources.models import Payment
-from humanresources.models import Person
+from people.models import Person
 
 from .proposals_create import CreateContractProposalFormWidget
-from frontend.humanresources_apps.apps.contracts.contracts_form import ContractEditFormWidget
+from humanresources.apps.contracts.contracts_form import ContractEditFormWidget
 
 
 class PaymentEditInline(ModelFormWidget):
@@ -23,12 +23,12 @@ class PaymentEditInline(ModelFormWidget):
     TITLE = 'Payments'
 
     FIELDSETS = [
-        'financeproject',
-        ('payment_nmonths', 'payment_amount')
+        'project',
+        ('n_months', 'amount')
     ]
 
     def autocomplete_search(self, queryset, keyword, control):
-        if control == self.financeproject:
+        if control == self.project:
             return queryset.active()
         return queryset
 
@@ -42,7 +42,7 @@ class PaymentInline(ModelAdminWidget):
     MODEL = Payment
     TITLE = 'Payments'
 
-    LIST_DISPLAY = ['payment_amount', 'financeproject', 'payment_nmonths']
+    LIST_DISPLAY = ['amount', 'project', 'n_months']
 
     EDITFORM_CLASS = PaymentEditInline
 
@@ -84,9 +84,9 @@ class EditContractProposalFormWidget(CreateContractProposalFormWidget):
         'motive',
         'end_date',
         'responsible',
-        'contractproposal_closingdate',
-        'contractproposal_createdon',
-        'closedby',
+        'closingdate',
+        'created_on',
+        'closed_by',
         'status_changed',
     )
 
@@ -95,7 +95,7 @@ class EditContractProposalFormWidget(CreateContractProposalFormWidget):
         segment(
             (
                 'motive',
-                'contractproposal_createdon',
+                'created_on',
                 'responsible',
                 'status',
                 'status_changed'
@@ -109,8 +109,8 @@ class EditContractProposalFormWidget(CreateContractProposalFormWidget):
                 'info:If the Person is missing from the list, use the '
                 'fields below to indicate the name and email contact',
                 (
-                    'contractproposal_personname',
-                    'contractproposal_email',
+                    'person_name',
+                    'person_email',
                 ),
                 field_css='fourteen wide',
             ),
@@ -122,17 +122,18 @@ class EditContractProposalFormWidget(CreateContractProposalFormWidget):
         segment(
             'h3:CONTRACT DETAILS',
             (
-                'contractproposal_start',
-                'contractproposal_duration',
-                'contractproposal_duration_additional_days',
+                'start',
+                'months_duration',
+                'days_duration',
                 'end_date',
             ),
             (
                 'position',
-                'typeoffellowship',
-                'contractproposal_salary',
+                'fellowship_type',
+                'salary',
+                ' '
             ),
-            'contractproposal_scientificdesc',
+            'description',
         ),
         segment('PaymentInline')
     ]

@@ -34,10 +34,10 @@ class Command(BaseCommand):
 
             position            = row[2].value
             project             = row[3].value
-            contract_type       = row[4].value
-            contract_ref        = row[5].value
-            contract_start      = row[6].value
-            contract_end        = row[7].value
+            type       = row[4].value
+            ref        = row[5].value
+            start      = row[6].value
+            end        = row[7].value
             requisition_start   = row[8].value
             requisition_end     = row[9].value
             funding             = row[10].value

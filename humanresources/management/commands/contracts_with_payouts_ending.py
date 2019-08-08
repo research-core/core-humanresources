@@ -63,9 +63,9 @@ class Command(BaseCommand):
         #Select all the contracts that doesn't have payouts to cover the end of th contract
         contracts = Contract.objects.raw(f"""
                                         select * from humanresources_payout b, humanresources_contract a
-                                        where a.contract_id = b.contract_id and
-                                        b.payout_end < a.contract_end and
-                                        a.contract_end > CURDATE() + INTERVAL {settings.ENDING_CONTRACT_WARNING_N_DAYS_BEFORE} DAY;
+                                        where a.id = b.id and
+                                        b.end < a.end and
+                                        a.end > CURDATE() + INTERVAL {settings.ENDING_CONTRACT_WARNING_N_DAYS_BEFORE} DAY;
                                         """)
         result = []
         
@@ -80,7 +80,7 @@ class Command(BaseCommand):
 
     def contracts_expiring(self):
         # Select all the contracts that doesn't have payouts to cover the end of th contract
-        contracts_expiring = Contract.objects.filter(contract_end__range=[TODAY, END_DATE])
+        contracts_expiring = Contract.objects.filter(end__range=[TODAY, END_DATE])
 
         return sorted(list(set(contracts_expiring)), key=lambda x: str(x.person))
 

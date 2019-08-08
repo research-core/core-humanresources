@@ -24,12 +24,12 @@ def create_proposal(contract, motive, responsible):
         responsible=responsible,
         person=contract.person,
         supervisor=contract.supervisor,
-        contractproposal_start=contract.contract_start,
-        contractproposal_duration=contract.contract_duration,
-        contractproposal_duration_additional_days=contract.contract_duration_additional_days,
-        contractproposal_salary=contract.contract_salary,
-        contractproposal_scientificdesc=contract.contract_scientificdesc,
-        typeoffellowship=contract.typeoffellowship,
+        start=contract.start,
+        months_duration=contract.months_duration,
+        days_duration=contract.days_duration,
+        contractproposal_salary=contract.salary,
+        contractproposal_scientificdesc=contract.description,
+        fellowship_type=contract.fellowship_type,
         position=contract.position,
     )
     new_proposal.save()
@@ -37,8 +37,8 @@ def create_proposal(contract, motive, responsible):
     for payout in contract.payout_set.all():
         payment = Payment(
             contractproposal=new_proposal,
-            financeproject=payout.financeproject,
-            payment_amount=payout.payout_amount,
+            project=payout.project,
+            amount=payout.amount,
         )
         payment.save()
 

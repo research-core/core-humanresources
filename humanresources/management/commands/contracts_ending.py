@@ -19,7 +19,7 @@ class Command(BaseCommand):
         Find the contracts ending, from people that belong to specific Django groups.
         """
         if groups:
-            contracts = Contract.objects.filter(contract_end__range=[timezone.datetime.today().date(), end_date],
+            contracts = Contract.objects.filter(end__range=[timezone.datetime.today().date(), end_date],
                                                 person__group__in=groups)
             # only the contracts marked to receive a warning alert
             contracts = contracts.filter(contract_warningemail=True)
@@ -27,9 +27,9 @@ class Command(BaseCommand):
             for contract in contracts:
                 # Check for each contract, if it exists already a proposal created.
                 # if not send a warning email
-                start_proposal = contract.contract_end + datetime.timedelta(days=1)
+                start_proposal = contract.end + datetime.timedelta(days=1)
                 proposals = ContractProposal.objects.filter(person=contract.person)
-                proposals = proposals.filter(contractproposal_start=start_proposal)
+                proposals = proposals.filter(start=start_proposal)
 
                 if not proposals.exists():
                     contracts_expiring.append(contract)
@@ -54,7 +54,7 @@ class Command(BaseCommand):
             if user.email:
                 send_to = [user.email]
                 try:
-                    person = Person.objects.get(djangouser=user)
+                    person = Person.objects.get(auth_user=user)
                     researchgroups = person.group_set.all()
                     # calculate the expering contracts belonging to the user groups
                     contracts_ending = self.get_contracts_expiring(end_date, researchgroups)

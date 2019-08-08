@@ -11,8 +11,7 @@ from pyforms.controls import ControlAutoComplete
 from pyforms.controls import ControlQueryList
 from pyforms.controls import ControlCombo
 
-from research.models        import Group
-from humanresources.models  import Person
+from people.models  import Person
 
 from confapp import conf
 from django.conf import settings
@@ -30,7 +29,7 @@ class PeoplePerYearReport(BaseWidget):
     TITLE = 'People per year'
 
     LAYOUT_POSITION = conf.ORQUESTRA_HOME_FULL
-    ORQUESTRA_MENU = 'left>HumanResourcesOverviewWidget'
+    ORQUESTRA_MENU = 'middle-left>HRDashboard'
     ORQUESTRA_MENU_ORDER = 21
     ORQUESTRA_MENU_ICON  = 'chart line'
 
@@ -72,7 +71,8 @@ class PeoplePerYearReport(BaseWidget):
     def populate_graphs(self):
         qs = self.get_queryset()
 
-        if not self._start.value:   self._start.value = qs.exclude(person_datejoined=None).order_by('person_datejoined').first().person_datejoined
+        if not self._start.value:   self._start.value = qs.exclude(person_datejoined=None).order_by(
+            'date_joined').first().person_datejoined
         if not self._end.value:     self._end.value   = qs.exclude(person_end=None).order_by('-person_end').first().person_end
 
         start = self._start.value

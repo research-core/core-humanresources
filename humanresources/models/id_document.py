@@ -7,15 +7,12 @@ class IDDocument(models.Model):
     Example: CF, CNP
     """
 
-    iddocument_id = models.AutoField(primary_key=True)          #: ID
-    iddocument_name = models.CharField('Name', max_length=200)  #: Name
+    name = models.CharField('Name', max_length=200)  #: Name
 
     class Meta:
-        ordering = ['iddocument_name',]
-        verbose_name = "ID Document type"
-        verbose_name_plural = "People - ID Documents types"
-        # abstract = True
-        app_label = 'humanresources'
+        ordering = ['name',]
+        verbose_name = "ID document type"
+        verbose_name_plural = "ID documents types"
 
     def __str__(self):
-        return self.iddocument_name
+        return self.name

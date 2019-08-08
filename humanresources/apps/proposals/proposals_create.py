@@ -12,7 +12,7 @@ from pyforms_web.widgets.django import ModelFormWidget
 
 from humanresources.models import ContractProposal
 from humanresources.models import Payment
-from humanresources.models import Person
+from people.models import Person
 
 import time
 from sorl.thumbnail import get_thumbnail
@@ -31,8 +31,8 @@ class CreateContractProposalFormWidget(ModelFormWidget):
                 'info:If the Person is missing from the list, use the '
                 'fields below to indicate the name and email contact',
                 (
-                    'contractproposal_personname',
-                    'contractproposal_email',
+                    'person_name',
+                    'person_email',
                 ),
                 field_css='fourteen wide',
             ),
@@ -44,17 +44,18 @@ class CreateContractProposalFormWidget(ModelFormWidget):
         segment(
             'h3:CONTRACT DETAILS',
             (
-                'contractproposal_start',
-                'contractproposal_duration',
-                'contractproposal_duration_additional_days',
+                'start',
+                'months_duration',
+                'days_duration',
                 'end_date',
             ),
             (
                 'position',
-                'typeoffellowship',
-                'contractproposal_salary',
+                'fellowship_type',
+                'salary',
+                ' '
             ),
-            'contractproposal_scientificdesc',
+            'description',
         )
     ]
 
@@ -69,9 +70,9 @@ class CreateContractProposalFormWidget(ModelFormWidget):
 
         super().__init__(*args, **kwargs)
 
-        self.contractproposal_start.changed_event = self.__update_end_date
-        self.contractproposal_duration.changed_event = self.__update_end_date
-        self.contractproposal_duration_additional_days.changed_event = self.__update_end_date
+        self.start.changed_event = self.__update_end_date
+        self.months_duration.changed_event = self.__update_end_date
+        self.days_duration.changed_event = self.__update_end_date
 
         # Handle situation where Add Form is opened as inline
         if not hasattr(self, 'person'):
@@ -106,5 +107,5 @@ class CreateContractProposalFormWidget(ModelFormWidget):
     def save_event(self, obj, new_object):
         if new_object:
             user = PyFormsMiddleware.user()
-            obj.responsible = user
+            obj.responsible = user.person
         return super().save_event(obj, new_object)

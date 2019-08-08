@@ -28,10 +28,19 @@ class ProposalQuerySet(models.QuerySet):
 
         This is by default what everyone sees if they have no permissions.
         """
-        return self.filter(
-            Q(person__djangouser=user) | Q(supervisor__in=user.person_user.all()) | Q(responsible=user)
-        ).exclude(
-            Q(person__djangouser=user) & ~Q(responsible=user)
+        if user.is_superuser:
+            return self
+
+        filter = self
+        try:
+            filter = filter.filter(
+                Q(person__auth_user=user) | Q(supervisor__in=user.person) | Q(responsible__user_auth=user)
+            )
+        except Person.DoesNotExist:
+            pass
+
+        return filter.exclude(
+            Q(person__auth_user=user) & ~Q(responsible__user_auth=user)
         ).distinct()
 
     def managed_by(self, user, required_codenames, default=None):
@@ -48,7 +57,7 @@ class ProposalQuerySet(models.QuerySet):
         if user.is_superuser:
             return self
 
-        ranked_permissions = Permissions.objects.filter_by_auth_permissions(
+        ranked_permissions = Permission.objects.filter_by_auth_permissions(
             user, self.model, required_codenames)
 
         if ranked_permissions.exists():
@@ -65,30 +74,30 @@ class ProposalQuerySet(models.QuerySet):
                 rankfilters = Q()
                 for researchgroup, ranking in rankings:
                     rankfilters.add(Q(researchgroup=researchgroup, ranking__gte=ranking), Q.OR)
-                rankperms = Permissions.objects.filter(rankfilters)
+                rankperms = Permission.objects.filter(rankfilters)
 
                 persons = Person.objects.filter(group__in=groups_withaccess)
                 persons = persons.exclude(
-                    ~Q(djangouser=user) &
-                    Q(djangouser__groups__rankedpermissions__in=rankperms)
+                    ~Q(auth_user=user) &
+                    Q(auth_user__groups__rankedpermissions__in=rankperms)
                 ).distinct()
                 #####################################################################
 
                 filters = Q()
                 # If the proposal is from the user
-                filters.add(Q(person__djangouser=user), Q.OR)
+                filters.add(Q(person__auth_user=user), Q.OR)
 
                 # If the proposal was submitted by the user
-                filters.add(Q(responsible=user), Q.OR)
+                filters.add(Q(responsible__user_auth=user), Q.OR)
 
                 # If the user is the supervisor
-                filters.add(Q(supervisor__djangouser=user), Q.OR)
+                filters.add(Q(supervisor__auth_user=user), Q.OR)
 
                 # Proposal supervisor is of a group managed by user
                 filters.add(Q(
                     supervisor__groupmember__group__in=groups_withaccess
                 ) & ~Q(
-                    supervisor__djangouser__groups__rankedpermissions__in=rankperms
+                    supervisor__auth_user__groups__rankedpermissions__in=rankperms
                 ), Q.OR)
 
                 # Add the group users
@@ -113,7 +122,7 @@ class ProposalQuerySet(models.QuerySet):
 
                 # Finally, exclude self proposals
                 return self.filter(filters).exclude(
-                    Q(person__djangouser=user) & ~Q(responsible=user)
+                    Q(person__auth_user=user) & ~Q(responsible__user_auth=user)
                 ).distinct()
 
         return default.distinct()
@@ -133,7 +142,7 @@ class ProposalQuerySet(models.QuerySet):
         if user.is_superuser:
             return True
 
-        return Permissions.objects.filter_by_auth_permissions(
+        return Permission.objects.filter_by_auth_permissions(
             user=user,
             model=self.model,
             codenames=['add'],

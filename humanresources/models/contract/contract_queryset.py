@@ -14,7 +14,7 @@ class ContractQuerySet(models.QuerySet):
 
     def active(self):
         now = timezone.now()
-        return self.filter(contract_start__lte=now, contract_end__gte=now)
+        return self.filter(start__lte=now, end__gte=now)
 
     def no_active_proposals(self):
         proposals = ContractProposal.objects.active()
@@ -24,21 +24,21 @@ class ContractQuerySet(models.QuerySet):
     def expiring_soon(self):
         now = timezone.now()
         limit_date = now + relativedelta(days=settings.ENDING_CONTRACT_WARNING_N_DAYS_BEFORE )
-        return self.filter(contract_end__range=[now, limit_date])
+        return self.filter(end__range=[now, limit_date])
 
     def expired(self):
         now = timezone.now()
-        return self.filter(contract_end__lt=now)
+        return self.filter(end__lt=now)
 
     def expiring_payouts(self):
         now = timezone.now()
         limit_date = now + relativedelta(days=settings.ENDING_CONTRACT_WARNING_N_DAYS_BEFORE)
 
         # exclude all the contracts with payouts with ending at the end of the contract
-        qs = self.exclude(payout__payout_end__gte=F('contract_end'))
+        qs = self.exclude(payout__end__gte=F('end'))
 
         # filter all the contracts with payouts ending before the limit date
-        qs = qs.filter(payout__payout_end__lte=limit_date)
+        qs = qs.filter(payout__end__lte=limit_date)
         return qs.distinct()
 
     # User dependent Querysets
@@ -52,9 +52,9 @@ class ContractQuerySet(models.QuerySet):
         This is by default what everyone sees if they have no permissions.
         """
         return self.filter(
-            Q(person__djangouser=user)
+            Q(person__auth_user=user)
             |
-            Q(supervisor__djangouser=user)
+            Q(supervisor__auth_user=user)
         ).distinct()
 
     def managed_by(self, user, required_codenames, default=None):
@@ -70,7 +70,7 @@ class ContractQuerySet(models.QuerySet):
 
         if user.is_superuser: return self
 
-        ranked_permissions = Permissions.objects.filter_by_auth_permissions(
+        ranked_permissions = Permission.objects.filter_by_auth_permissions(
             user, self.model, required_codenames)
 
         if ranked_permissions.exists():
@@ -86,32 +86,32 @@ class ContractQuerySet(models.QuerySet):
                 rankfilters = Q()
                 for researchgroup, ranking in rankings:
                     rankfilters.add(Q(researchgroup=researchgroup, ranking__gte=ranking), Q.OR)
-                rankperms = Permissions.objects.filter(rankfilters)
+                rankperms = Permission.objects.filter(rankfilters)
 
                 persons = Person.objects.filter(group__in=groups_withaccess)
                 persons = persons.exclude(
-                    ~Q(djangouser=user) &
-                    Q(djangouser__groups__rankedpermissions__in=rankperms)
+                    ~Q(auth_user=user) &
+                    Q(auth_user__groups__rankedpermissions__in=rankperms)
                 ).distinct()
 
 
                 filters = Q()
 
                 # Show the contracts from the user
-                filters.add(Q(person__djangouser=user), Q.OR)
+                filters.add(Q(person__auth_user=user), Q.OR)
 
                 # Show the contracts the user is supervisor
-                filters.add(Q(supervisor__djangouser=user), Q.OR)
+                filters.add(Q(supervisor__auth_user=user), Q.OR)
 
                 # Show the people from groups with visibility
                 filters.add(Q(
-                    person__groupmember__date_joined__lte=F('contract_start'),
-                    person__groupmember__date_left__gte=F('contract_end'),
+                    person__groupmember__date_joined__lte=F('start'),
+                    person__groupmember__date_left__gte=F('end'),
                     person__groupmember__group__in=groups_withaccess,
                     person__in=persons
                 ), Q.OR)
                 filters.add(Q(
-                    person__groupmember__date_joined__lte=F('contract_start'),
+                    person__groupmember__date_joined__lte=F('start'),
                     person__groupmember__date_left__isnull=True,
                     person__groupmember__group__in=groups_withaccess,
                     person__in=persons
@@ -138,7 +138,7 @@ class ContractQuerySet(models.QuerySet):
         )
 
     def has_add_permissions(self, user):
-        return Permissions.objects.filter_by_auth_permissions(
+        return Permission.objects.filter_by_auth_permissions(
             user=user,
             model=self.model,
             codenames=['add'],

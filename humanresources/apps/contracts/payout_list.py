@@ -11,11 +11,11 @@ class PayoutInline(ModelAdminWidget):
     TITLE = 'Payout'
 
     LIST_DISPLAY = [
-        'payout_start',
-        'payout_end',
-        'payout_amount',
-        'order__order_reqnum',
-        'financeproject',
+        'start',
+        'end',
+        'amount',
+        'order__requisition_number',
+        'project',
     ]
 
     EDITFORM_CLASS = PayoutEditForm

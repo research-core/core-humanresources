@@ -1,1 +1,1 @@
-default_app_config = 'humanresources.apps.HumanResourcesConfig'
+#default_app_config = 'humanresources.apps.HumanResourcesConfig'

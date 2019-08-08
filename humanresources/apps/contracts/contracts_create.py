@@ -11,31 +11,31 @@ class ContractCreateFormWidget(ModelFormWidget):
     FIELDSETS = [
         'h3:Identification',
         segment(
-            ('contract_ref','supervisor'),
-            ('person', 'contract_warningemail')
+            ('ref','supervisor'),
+            ('person', 'warning_contract_ending')
         ),
         'h3:Contract conditions',
         segment(
-            ('contract_start', 'contract_duration',
-             'contract_duration_additional_days', 'contract_end'),
-            ('contract_salary', ),
-            ('contract_socialsecuritypaid', 'contract_socialsecurity'),
-            ('contract_socialsecuritystart', 'contract_socialsecurityend')
+            ('start', 'months_duration',
+             'days_duration', 'end'),
+            ('salary', ),
+            ('socialsecurity_is_paid', 'social_security'),
+            ('socialsecurity_start', 'socialsecurity_end')
         ),
         'h3:Function',
         segment(
             'position',
-            'contract_fellowshipref',
-            'typeoffellowship'
+            'fellowship_ref',
+            'fellowship_type'
         ),
         segment(
-            'contract_scientificdesc',
-            'contract_notes',
+            'description',
+            'notes',
             css='secondary'
         ),
     ]
 
-    READ_ONLY = ['contract_end']
+    READ_ONLY = ['end']
 
     # AUTHORIZED_GROUPS = ['superuser', settings.APP_PROFILE_HR_PEOPLE]
 
@@ -47,20 +47,20 @@ class ContractCreateFormWidget(ModelFormWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.contract_start.changed_event = self.__update_end_date
-        self.contract_duration.changed_event = self.__update_end_date
-        self.contract_duration_additional_days.changed_event = self.__update_end_date
+        self.start.changed_event = self.__update_end_date
+        self.months_duration.changed_event = self.__update_end_date
+        self.days_duration.changed_event = self.__update_end_date
 
     def __update_end_date(self):
         try:
-            days = 0 if not self.contract_duration_additional_days.value else self.contract_duration_additional_days.value
-            self.contract_end.value = (self.contract_start.value + relativedelta(months=self.contract_duration.value, days=days) - timedelta(days=1))
+            days = 0 if not self.days_duration.value else self.days_duration.value
+            self.end.value = (self.start.value + relativedelta(months=self.months_duration.value, days=days) - timedelta(days=1))
         except:
-            self.contract_end.value = ''
+            self.end.value = ''
 
 
     def update_object_fields(self, obj):
         self.__update_end_date()
-        obj.contract_end = self.contract_end.value
+        obj.end = self.end.value
         res = super().update_object_fields(obj)
         return res

@@ -10,4 +10,11 @@ setup(
     author='Ricardo Ribeiro',
     author_email='ricardo.ribeiro@research.fchampalimaud.org',
     packages=find_packages(),
+    install_requires=[
+        'django-localflavor',
+        'weasyprint',
+        'django-weasyprint',
+        'django-model-utils',
+        'django-money'
+    ]
 )

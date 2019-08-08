@@ -17,7 +17,7 @@ class PrivateInfoQuerySet(models.QuerySet):
         This is by default what everyone sees if they have no permissions.
         """
         return self.filter(
-            Q(person__djangouser=user)
+            Q(person__auth_user=user)
         ).distinct()
 
     def managed_by(self, user, required_codenames):
@@ -27,7 +27,7 @@ class PrivateInfoQuerySet(models.QuerySet):
 
         Uses the RankedPermissions table.
         """
-        ranked_permissions = Permissions.objects.filter_by_auth_permissions(
+        ranked_permissions = Permission.objects.filter_by_auth_permissions(
             user, self.model, required_codenames)
 
         if ranked_permissions.exists():
@@ -45,10 +45,10 @@ class PrivateInfoQuerySet(models.QuerySet):
                 or_filter = Q()
                 for researchgroup, ranking in rankings:
                     or_filter.add(
-                        Q(person__djangouser__groups__rankedpermissions__researchgroup=researchgroup) &
-                        Q(person__djangouser__groups__rankedpermissions__ranking__gte=ranking), Q.OR
+                        Q(person__auth_user__groups__rankedpermissions__researchgroup=researchgroup) &
+                        Q(person__auth_user__groups__rankedpermissions__ranking__gte=ranking), Q.OR
                     )
-                return qs.exclude(~Q(person__djangouser=user) & or_filter).distinct()
+                return qs.exclude(~Q(person__auth_user=user) & or_filter).distinct()
 
         # By default returns only the Person associated to the user
         return self.owned_by(user).distinct()
@@ -60,7 +60,7 @@ class PrivateInfoQuerySet(models.QuerySet):
         return self.managed_by(user, ['view', 'change'])
 
     def has_add_permissions(self, user):
-        return Permissions.objects.filter_by_auth_permissions(
+        return Permission.objects.filter_by_auth_permissions(
             user=user,
             model=self.model,
             codenames=['add'],

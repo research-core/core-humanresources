@@ -11,7 +11,6 @@ from pyforms.controls import ControlAutoComplete
 from pyforms.controls import ControlQueryList
 from pyforms.controls import ControlCombo
 
-from research.models        import Group
 from humanresources.models  import Contract
 
 from confapp import conf
@@ -27,10 +26,10 @@ from django.db.models import Q
 class ContractsPerYearReport(BaseWidget):
 
     UID   = 'contracts-per-year-report'
-    TITLE = 'active contracts per year'
+    TITLE = 'Active contracts per year'
 
     LAYOUT_POSITION = conf.ORQUESTRA_HOME_FULL
-    ORQUESTRA_MENU = 'left>HumanResourcesOverviewWidget'
+    ORQUESTRA_MENU = 'middle-left>HRDashboard'
     ORQUESTRA_MENU_ORDER = 22
     ORQUESTRA_MENU_ICON  = 'chart line'
 
@@ -62,8 +61,8 @@ class ContractsPerYearReport(BaseWidget):
     
         qs = Contract.objects.all()
 
-        if start: qs = qs.exclude(contract_end__lte=start)
-        if end:   qs = qs.exclude(contract_start__gte=end)
+        if start: qs = qs.exclude(end__lte=start)
+        if end:   qs = qs.exclude(start__gte=end)
 
         return qs.distinct()
 
@@ -72,8 +71,8 @@ class ContractsPerYearReport(BaseWidget):
     def populate_graphs(self):
         qs = self.get_queryset()
 
-        if not self._start.value:   self._start.value = qs.exclude(contract_start=None).order_by('contract_start').first().contract_start
-        if not self._end.value:     self._end.value   = qs.exclude(contract_end=None).order_by('-contract_end').first().contract_end
+        if not self._start.value:   self._start.value = qs.exclude(start=None).order_by('start').first().start
+        if not self._end.value:     self._end.value   = qs.exclude(end=None).order_by('-end').first().end
 
         start = self._start.value
         end   = self._end.value
@@ -87,11 +86,11 @@ class ContractsPerYearReport(BaseWidget):
             e = dt.replace(day=31, month=12)
 
             q0 = qs.filter( 
-                ( Q(contract_start__gte=b) & Q(contract_end__lte=e ) ) |
-                ( Q(contract_start__range=(b,e)) & Q(contract_end=None) ) |
-                ( Q(contract_start__lte=b) & Q(contract_end=None) ) |
-                ( Q(contract_start__lte=b) & Q(contract_end__range=(b,e)) ) |
-                ( Q(contract_start__range=(b,e)) & Q(contract_end__gte=e) )
+                ( Q(start__gte=b) & Q(end__lte=e ) ) |
+                ( Q(start__range=(b,e)) & Q(end=None) ) |
+                ( Q(start__lte=b) & Q(end=None) ) |
+                ( Q(start__lte=b) & Q(end__range=(b,e)) ) |
+                ( Q(start__range=(b,e)) & Q(end__gte=e) )
             ).distinct()
             people_year.append( (dt.year, q0.count()) )
 
@@ -102,7 +101,7 @@ class ContractsPerYearReport(BaseWidget):
             e = dt.replace(day=31, month=12)
 
             q0 = qs.filter( 
-                Q(contract_start__range=(b,e)) | Q(contract_end__range=(b,e) )
+                Q(start__range=(b,e)) | Q(end__range=(b,e) )
             ).distinct()
 
             people_movs.append( (dt.year, q0.count()) )
@@ -113,7 +112,7 @@ class ContractsPerYearReport(BaseWidget):
             e = dt.replace(day=31, month=12)
 
             q0 = qs.filter( 
-                Q(contract_start__range=(b,e))
+                Q(start__range=(b,e))
             ).distinct()
             people_joins.append( (dt.year, q0.count()) )
 
@@ -123,7 +122,7 @@ class ContractsPerYearReport(BaseWidget):
             e = dt.replace(day=31, month=12)
 
             q0 = qs.filter( 
-                Q(contract_end__range=(b,e))
+                Q(end__range=(b,e))
             ).distinct()
             people_lefts.append( (dt.year, q0.count()) )
 

@@ -19,14 +19,7 @@ from django_weasyprint import WeasyTemplateView
 from humanresources.utils import send_mail
 from model_utils.models import StatusModel
 from model_utils import Choices
-
-try:
-    # Django 2.0
-    from django.urls import reverse
-except ImportError:
-    # Django 1.6
-    from django.core.urlresolvers import reverse
-
+from django.urls import reverse
 
 from .proposal_queryset import ProposalQuerySet
 
@@ -60,50 +53,36 @@ class ContractProposal(StatusModel):
         max_length=7,
     )
 
-    contractproposal_id         = models.AutoField(primary_key=True) #: ID
-    contractproposal_createdon  = models.DateField('Created on', auto_now_add=True)
-    contractproposal_start      = models.DateField('Start date')#: Start date of the function and affiliation
-    contractproposal_duration   = models.IntegerField('Duration', help_text='Months')
-    contractproposal_duration_additional_days = models.IntegerField('Days', help_text='Additional days', default=0)
-    contractproposal_approved   = models.NullBooleanField('Approved', blank=True)
+    created_on = models.DateField('Created on', auto_now_add=True)
 
-    contractproposal_salary     = models.DecimalField('Monthly stipend / Gross salary', max_digits=15, decimal_places=2)  #: salary of the Person
-    contractproposal_approved   = models.NullBooleanField('Approved', blank=True)
+    person_name  = models.CharField('Person Name', blank=True, null=True, max_length=255, help_text="In case the name is not in the list, fill it here")
+    person_email = models.EmailField('Person Email', blank=True, null=True, max_length=255, help_text="Admin will use this to contact the newcomer")
+    salary       = models.DecimalField('Monthly stipend / Gross salary', max_digits=15,
+                                 decimal_places=2)  #: salary of the Person
+    start           = models.DateField('Start date')  #: Start date of the function and affiliation
+    months_duration = models.IntegerField('Duration', help_text='Months')
+    days_duration   = models.IntegerField('Days', help_text='Additional days', default=0)
+    description     = models.TextField('Scientific Work Description', blank=False, null=False, default='', help_text="Short mandatory description")
 
-    contractproposal_personname = models.CharField('Person Name', blank=True, null=True, max_length=255, help_text="In case the name is not in the list, fill it here")
-    contractproposal_email      = models.EmailField('Person Email', blank=True, null=True, max_length=255, help_text="Admin will use this to contact the newcomer")
-
-
-    contractproposal_scientificdesc = models.TextField('Scientific Work Description', blank=False, null=False, default='', help_text="Short mandatory description")
-    person                          = models.ForeignKey('people.Person', blank=True, null=True, on_delete=models.CASCADE)
-    typeoffellowship                = models.ForeignKey('TypeOfFellowship', blank=True, null=True, verbose_name='Type of contract', on_delete=models.CASCADE)
-
-
-    responsible                  = models.ForeignKey(User, blank=True, null=True, verbose_name='Submitted by', related_name = 'responsible', on_delete=models.CASCADE) #: Fk The user that created that proposal
-    contractproposal_closingdate = models.DateField('Closing date', blank=True, null=True,) #: Name
-    closedby                     = models.ForeignKey(User, blank=True, null=True, verbose_name='Closed by', related_name = 'closed_by', on_delete=models.CASCADE) #: Fk The user that closed that proposal
-
-    contract    = models.ForeignKey('Contract', blank=True, null=True, on_delete=models.SET_NULL)
-
-    supervisor  = models.ForeignKey('people.Person', verbose_name='Supervisor', related_name='where_am_i_supervisor', limit_choices_to={'djangouser__groups__name': settings.PROFILE_GROUP_RESPONSIBLE}, on_delete=models.CASCADE)
-    # supervisor_name = models.CharField(max_length=255)
-    # supervisor_email = models.EmailField(max_length=255)
-
-    position = models.ForeignKey(
-        to='people.Position',
-        null=True,
-        blank=True,
-        on_delete=models.CASCADE,
-    )
+    person          = models.ForeignKey('people.Person', blank=True, null=True, on_delete=models.CASCADE)
+    fellowship_type = models.ForeignKey('FellowshipType', blank=True, null=True, verbose_name='Type of contract', on_delete=models.CASCADE)
+    position        = models.ForeignKey('people.Position', null=True, blank=True,  on_delete=models.SET_NULL)
+    responsible     = models.ForeignKey('people.Person', blank=True, null=True, verbose_name='Submitted by',
+                                         related_name = 'responsible_of_proposals', on_delete=models.SET_NULL )
+    closed_on  = models.DateField('Closing date', blank=True, null=True, ) #: Name
+    closed_by  = models.ForeignKey('auth.User', blank=True, null=True, verbose_name='Closed by', related_name ='closed_by', on_delete=models.SET_NULL) #: Fk The user that closed that proposal
+    contract   = models.ForeignKey('Contract', blank=True, null=True, on_delete=models.SET_NULL)
+    supervisor = models.ForeignKey('people.Person', verbose_name='Supervisor', related_name='supervisor_of_proposals',
+                                    #limit_choices_to={'auth_user__groups__name': settings.PROFILE_GROUP_RESPONSIBLE},
+                                    on_delete=models.SET_NULL, null=True)
 
     objects = ProposalQuerySet.as_manager()
 
     class Meta:
-        ordering = ['-contractproposal_createdon',]
-        verbose_name = "Contract Proposal"
-        verbose_name_plural = "Contract Proposals"
-        # abstract = True
-        app_label = 'humanresources'
+        ordering = ['-created_on',]
+        verbose_name = "Contract proposal"
+        verbose_name_plural = "Contract proposals"
+
 
         permissions = (
             ("print_proposal", "Print Proposal"),
@@ -111,25 +90,25 @@ class ContractProposal(StatusModel):
         )
 
     def __str__(self):
-        name = self.person.full_name if self.person is not None else self.contractproposal_personname
+        name = self.person.full_name if self.person is not None else self.person_name
         return str(name) + ' - ' + (self.position.name if self.position is not None else 'No position')
 
     def clean(self):
 
-        if self.person is None and (self.contractproposal_personname is None or len(self.contractproposal_personname)==0):
+        if self.person is None and (self.person_name is None or len(self.person_name) == 0):
             raise ValidationError('Please enter information about the Person to hire.')
 
 
     def personname(self):
-        return self.person.full_name if self.person else self.contractproposal_personname
+        return self.person.full_name if self.person else self.person_name
     personname.short_description = 'Proposal for'
     personname.allow_tags = True
 
     def end_date(self):
-        if self.contractproposal_start is not None:
-            duration = 0 if self.contractproposal_duration is None else self.contractproposal_duration
-            days = 0 if self.contractproposal_duration_additional_days==None else self.contractproposal_duration_additional_days
-            return self.contractproposal_start+relativedelta(months=duration, days=days)-timedelta(days=1)
+        if self.start is not None:
+            duration = 0 if self.months_duration is None else self.months_duration
+            days = 0 if self.days_duration == None else self.days_duration
+            return self.start + relativedelta(months=duration, days=days) - timedelta(days=1)
         else:
             return None
     end_date.short_description = 'End Date'
@@ -201,9 +180,9 @@ class ContractProposal(StatusModel):
     status_icon.short_description = 'status'
 
     def contractproposal_status(self):
-        if self.contract is None and self.contractproposal_closingdate:
+        if self.contract is None and self.closed_on:
             return 'Not Approved'
-        if self.contract and self.contractproposal_closingdate:
+        if self.contract and self.closed_on:
             return 'Approved'
     contractproposal_status.short_description = 'Contract Proposal Status'
     contractproposal_status.allow_tags = True
@@ -222,7 +201,7 @@ class ContractProposal(StatusModel):
 
     def printproposal(self):
         if self.pk:
-            if not self.closedby or self.contract:
+            if not self.closed_by or self.contract:
                 return format_html("""<a class='btn btn-alert'
                          href='{0}' target='_blank' >
                          <i class="icon-print icon-black"></i>
@@ -243,7 +222,7 @@ class ContractProposal(StatusModel):
                          <i class="icon-remove icon-black"></i>
                          Go to the contract
                       </a>""".format( reverse('approve_contract', args=(self.pk,)) ))
-            elif not self.closedby:
+            elif not self.closed_by:
                 return format_html("""<a class='btn btn-alert'
                              href='{0}' >
                              <i class="icon-remove icon-black"></i>
@@ -259,7 +238,7 @@ class ContractProposal(StatusModel):
     def closeproposal(self):
         if self.pk:
             if not self.contract:
-                if self.closedby:
+                if self.closed_by:
                     return format_html("""<a class='btn btn-alert'
                                  href='{0}' >
                                  <i class="icon-remove icon-black"></i>
@@ -335,12 +314,12 @@ class ContractProposal(StatusModel):
 
         new_contract = Contract(
             person=self.person,
-            contract_start=self.contractproposal_start,
-            contract_duration=self.contractproposal_duration,
-            contract_duration_additional_days=self.contractproposal_duration_additional_days,
-            contract_salary=self.contractproposal_salary,
-            contract_scientificdesc=self.contractproposal_scientificdesc,
-            typeoffellowship=self.typeoffellowship,
+            start=self.start,
+            months_duration=self.months_duration,
+            days_duration=self.days_duration,
+            salary=self.salary,
+            description=self.description,
+            fellowship_type=self.fellowship_type,
             position=self.position,
         )
         new_contract.save()
@@ -348,7 +327,7 @@ class ContractProposal(StatusModel):
         for payment in self.payment_set.all():
             # request by Teresa:
             # Payout end date should not fall beyond end of the current year
-            proposal_start = self.contractproposal_start
+            proposal_start = self.start
             proposal_end = self.end_date()
             if proposal_end.year > proposal_start.year:
                 proposal_end = date(proposal_start.year, 12, 31)
@@ -377,7 +356,7 @@ class ContractProposal(StatusModel):
 
             # FIXME test only
             'motive': 'New Hire',
-            'proposal_date': self.contractproposal_createdon.strftime('%b %d, %Y'),
+            'proposal_date': self.created_on.strftime('%b %d, %Y'),
         }
 
         # FIXME this should be the debug, erase the `not`

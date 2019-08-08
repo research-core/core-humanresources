@@ -75,13 +75,13 @@ class Command(BaseCommand):
         was_student = False
         gap_days = 0
 
-        for contract in person.contract_set.order_by('-contract_start')[1:]:
+        for contract in person.contract_set.order_by('-start')[1:]:
 
             if 'student' in contract.position.name.lower():
                 was_student = True
                 break
 
-            diff = (first_day - contract.contract_end).days
+            diff = (first_day - contract.end).days
             if diff > 1:
                 has_gap = True
                 gap_days += diff
@@ -93,15 +93,15 @@ class Command(BaseCommand):
             if self.DEBUG:
                 print(
                     '  |-->  ',
-                    contract.contract_ref,
-                    contract.contract_start,
-                    contract.contract_end,
-                    (contract.contract_end - contract.contract_start).days,
-                    contract.contract_salary,
+                    contract.ref,
+                    contract.start,
+                    contract.end,
+                    (contract.end - contract.start).days,
+                    contract.salary,
                     contract.supervisor,
                 )
 
-            first_day = contract.contract_start
+            first_day = contract.start
 
         notes = []
         if has_gap:
@@ -156,12 +156,12 @@ class Command(BaseCommand):
                     % (person.contract_set.count(), person.name)
                 )
 
-            last_contract = person.contract_set.order_by('contract_start').last()
+            last_contract = person.contract_set.order_by('start').last()
 
             if (
-                last_contract.contract_start
+                last_contract.start
                 <= today
-                <= last_contract.contract_end
+                <= last_contract.end
             ):
                 current_contract = last_contract
             else:
@@ -176,15 +176,15 @@ class Command(BaseCommand):
             if self.DEBUG:
                 print(
                     '----->  ',
-                    current_contract.contract_ref,
-                    current_contract.contract_start,
-                    current_contract.contract_end,
-                    (current_contract.contract_end - current_contract.contract_start).days,
-                    current_contract.contract_salary,
+                    current_contract.ref,
+                    current_contract.start,
+                    current_contract.end,
+                    (current_contract.end - current_contract.start).days,
+                    current_contract.salary,
                     current_contract.supervisor,
                 )
 
-            first_day = current_contract.contract_start
+            first_day = current_contract.start
             supervisor = current_contract.supervisor
 
             first_day, supervisor, extra_notes = self.inspect_past_contracts(
@@ -226,7 +226,7 @@ class Command(BaseCommand):
                         [
                             person.name,
                             str(person.position),
-                            f"{current_contract.contract_salary} €",
+                            f"{current_contract.salary} €",
                             str(supervisor),
                             current_group_name,
                             relativedelta_to_str(total_duration),
@@ -240,7 +240,7 @@ class Command(BaseCommand):
                 [
                     person.name,
                     person.position,
-                    f"{current_contract.contract_salary} €",
+                    f"{current_contract.salary} €",
                     supervisor,
                     current_group_name,
                     relativedelta_to_str(total_duration),

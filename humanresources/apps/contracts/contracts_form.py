@@ -66,22 +66,22 @@ class ContractEditFormWidget(ModelFormWidget):
     FIELDSETS = [
         'h3:Identification',
         segment(
-            ('contract_ref', '_openproposal_btn', 'contract_warningemail'),
+            ('ref', '_openproposal_btn', 'warning_contract_ending'),
             ('person', 'supervisor')
         ),
         'h3:Contract conditions',
         segment(
-            ('contract_start', 'contract_duration',
-             'contract_duration_additional_days', 'contract_end'),
-            ('contract_salary', ),
-            ('contract_socialsecuritypaid', 'contract_socialsecurity'),
-            ('contract_socialsecuritystart', 'contract_socialsecurityend')
+            ('start', 'months_duration',
+             'days_duration', 'end'),
+            ('salary', ),
+            ('socialsecurity_is_paid', 'social_security'),
+            ('socialsecurity_start', 'socialsecurity_end')
         ),
         'h3:Function',
         segment(
             'position',
-            'contract_fellowshipref',
-            'typeoffellowship'
+            'fellowship_ref',
+            'fellowship_type'
         ),
         ' ',
         segment('PayoutInline', css='blue'),
@@ -89,8 +89,8 @@ class ContractEditFormWidget(ModelFormWidget):
         segment('FilesInline', css='blue'),
         ' ',
         segment(
-            'contract_scientificdesc',
-            'contract_notes',
+            'description',
+            'notes',
             css='secondary'
         ),
     ]
@@ -98,13 +98,13 @@ class ContractEditFormWidget(ModelFormWidget):
     READ_ONLY = (
         'person',
         'supervisor',
-        'contract_start',
-        'contract_end',
-        'contract_scientificdesc',
+        'start',
+        'end',
+        'description',
         'contract_salary',
         'position',
-        'typeoffellowship',
-        'contract_fellowshipref',
+        'fellowship_type',
+        'fellowship_ref',
     )
 
     @classmethod
@@ -131,6 +131,7 @@ class ContractEditFormWidget(ModelFormWidget):
     def __renew_btn_evt(self):
         pass
 
+    # noinspection PyUnresolvedReferences,PyUnresolvedReferences,PyUnresolvedReferences,PyUnresolvedReferences,PyUnresolvedReferences
     def __open_proposal_evt(self):
         obj = self.model_object
 
@@ -147,7 +148,7 @@ class ContractEditFormWidget(ModelFormWidget):
             app.LAYOUT_POSITION = conf.ORQUESTRA_NEW_TAB
 
     def get_contract_start(self):
-        return self.model_object.contract_start
+        return self.model_object.start
 
     @property
     def title(self):
