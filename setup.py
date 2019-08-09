@@ -8,13 +8,17 @@ setup(
     version='0.0',
     description='',
     author='Ricardo Ribeiro',
-    author_email='ricardo.ribeiro@research.fchampalimaud.org',
+    author_email='ricardojvr@gmail.com',
     packages=find_packages(),
     install_requires=[
         'django-localflavor',
         'weasyprint',
         'django-weasyprint',
         'django-model-utils',
-        'django-money'
+        'django-money',
+        'core-common',
+        'core-finances',
+        'core-people',
+        'core-permissions',
     ]
 )
