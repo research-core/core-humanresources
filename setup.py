@@ -24,8 +24,8 @@ setup(
         'django-model-utils',
         'django-money',
         'core-common',
-        'core-finances',
         'core-people',
+        'core-finance',
         'core-permissions',
     ]
 )
