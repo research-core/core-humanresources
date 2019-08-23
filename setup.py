@@ -9,8 +9,8 @@ with open('humanresources/__init__.py', 'r') as fd:
     content = fd.read()
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', content, re.MULTILINE).group(1)
     license = re.search(r'^__license__\s*=\s*[\'"]([^\'"]*)[\'"]', content, re.MULTILINE).group(1)
-if not version: raise RuntimeError('Cannot find version information')
-if not license: raise RuntimeError('Cannot find license information')
+if version is None: raise RuntimeError('Cannot find version information')
+if license is None: raise RuntimeError('Cannot find license information')
 
 with open('README.md', 'r') as fd:
     long_description = fd.read()
