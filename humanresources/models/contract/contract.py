@@ -196,8 +196,8 @@ class Contract(models.Model):
     #         researchgroup = ResearchGroup.objects.filter(
     #             Q(members__auth_user=user) | Q(person__auth_user=user)
     #         )
-    #         djangogroups  = user.groups.filter(name__startswith='GROUP:')
-    #         researchgroup = researchgroup.filter( groupdjango__in=djangogroups )
+    #         auth_groups  = user.groups.filter(name__startswith='GROUP:')
+    #         researchgroup = researchgroup.filter( groupdjango__in=auth_groups )
     #         return qs.filter(person__group__in=researchgroup).distinct()
 
     #     return qs.filter(person__auth_user=user).distinct()
