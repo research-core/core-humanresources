@@ -14,7 +14,7 @@ class PayoutInline(ModelAdminWidget):
         'start',
         'end',
         'amount',
-        'order__requisition_number',
+        #'order__requisition_number',
         'project',
     ]
 

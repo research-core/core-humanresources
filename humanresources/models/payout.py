@@ -15,7 +15,7 @@ try:
     from orders.models import OrderExpenseCode
     orders_module_installed = 'orders' in settings.INSTALLED_APPS
 except:
-    orders_module_istalled = False
+    orders_module_installed = False
 
 try:
     from suppliers.models import Supplier
@@ -33,17 +33,15 @@ class Payout(models.Model):
 
     start  = models.DateField('Start date', blank=True, null=True)
     end    = models.DateField('End date', blank=True, null=True)
-    amount = models.DecimalField('Monthly amount', blank=False, null=False, max_digits=15, decimal_places=2)#: FinanceProject.amount=sum(FinanceProjects.Payout)
-
+    amount = models.DecimalField('Monthly amount', blank=False, null=False, max_digits=15, decimal_places=2)
     total  = models.DecimalField('Total amount', max_digits=15, decimal_places=2, blank=True, default=0)
-
-    contract = models.ForeignKey('Contract', verbose_name='Contract', on_delete=models.CASCADE)  #: Fk to the Contract of this payout
+    contract = models.ForeignKey('Contract', verbose_name='Contract', on_delete=models.CASCADE)
     project  = models.ForeignKey(
         'finance.Project',
         verbose_name='Finance Project',
         limit_choices_to={'expensecode__number': '01'},
         on_delete=models.CASCADE,
-    )  #: Fk to the Finance Project of this payout
+    )
 
     class Meta:
         ordering = ['start', ]
@@ -57,17 +55,6 @@ class Payout(models.Model):
         if self.order:
             self.order.delete()
         return super(Payout, self).delete()
-
-    def requisition_number(self):
-        try:
-            if self.order.order_reqnum is not None:
-                return format_html("<a href='/finance/order/{0}/'>{1}</a>".format(self.order.pk, self.order.order_reqnum))
-            else:
-                return format_html("<a href='/finance/order/{0}/'>Missing requisition number</a>".format(self.order.pk))
-        except:
-            return "No order"
-    requisition_number.short_description = 'Requisition number'
-    requisition_number.allow_tags = True
 
     def total_amount(self):
 
@@ -108,7 +95,7 @@ class Payout(models.Model):
 
             expensecode = ExpenseCode.objects.get(
                 expensecode_number="01",
-                financeproject=self.project,
+                project=self.project,
             )
             neworder = Order(
                 order_amount=self.total_amount(),

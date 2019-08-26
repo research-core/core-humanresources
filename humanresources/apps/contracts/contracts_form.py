@@ -137,7 +137,7 @@ class ContractEditFormWidget(ModelFormWidget):
 
         # The import has to be done here to avoid recursive imports
         # between the contracts and the proposals
-        from frontend.humanresources_apps.apps.proposals.proposals_form import EditContractProposalFormWidget
+        from ..proposals.proposals_form import EditContractProposalFormWidget
 
         for proposal in obj.contractproposal_set.all():
             app = EditContractProposalFormWidget(

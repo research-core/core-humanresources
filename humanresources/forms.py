@@ -21,7 +21,7 @@ class ContractProposalForm(forms.ModelForm):
         cleaned_data = super().clean()
 
         total_payouts = sum([
-            Decimal(self.data[f'payment_set-{i}-payment_amount'] or '0')
+            Decimal(self.data[f'payment_set-{i}-amount'] or '0')
             for i in range(0, int(self.data['payment_set-TOTAL_FORMS']))
         ])
 

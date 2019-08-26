@@ -190,7 +190,7 @@ class Contract(models.Model):
     #     if user.is_superuser: return qs
     #     if user.groups.filter(name=settings.PROFILE_HUMAN_RESOURCES).exists(): return qs
     #     if user.groups.filter(name=settings.PROFILE_OSP).exists():
-    #         return qs.filter(payout__financeproject__financeproject_code__startswith='2').distinct()
+    #         return qs.filter(payout__financeproject__project_code__startswith='2').distinct()
 
     #     if user.groups.filter( Q(name=settings.PROFILE_GROUP_RESPONSIBLE) |  Q(name=settings.PROFILE_LAB_MANAGER) ).exists():
     #         researchgroup = ResearchGroup.objects.filter(

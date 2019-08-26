@@ -30,22 +30,22 @@ class Command(BaseCommand):
             marker = [False] * INTERVAL_RANGE
 
             payouts = Payout.objects.filter(Q(contract=contract) &
-                                            ((Q(payout_start__gte=TODAY) & Q(payout_end__lte=END_DATE)) |
-                                             (Q(payout_start__lte=TODAY) & Q(payout_end__gte=TODAY)) |
-                                             (Q(payout_start__gte=TODAY) & Q(payout_end__gte=END_DATE))
+                                            ((Q(start__gte=TODAY) & Q(end__lte=END_DATE)) |
+                                             (Q(start__lte=TODAY) & Q(end__gte=TODAY)) |
+                                             (Q(start__gte=TODAY) & Q(end__gte=END_DATE))
                                             )
                                             ).distinct()
             
             # Verify if there are payouts to cover the next ENDING_CONTRACT_WARNING_N_DAYS_BEFORE days 
             for p in payouts:
-                delta = (p.payout_start - TODAY).days
+                delta = (p.start - TODAY).days
 
                 if delta <= 0:
                     start_at = 0
                 else:
                     start_at = delta
 
-                end_at = (p.payout_end - p.payout_start).days
+                end_at = (p.end - p.start).days
                 if end_at > INTERVAL_RANGE - start_at:
                     end_at = INTERVAL_RANGE - start_at
 

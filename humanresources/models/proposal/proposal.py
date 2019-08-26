@@ -138,12 +138,14 @@ class ContractProposal(StatusModel):
             - New
             - Updated # TODO need subject change
         """
-
-        group = Group.objects.get(name=settings.PROFILE_HUMAN_RESOURCES)
-        users = group.user_set.all()
-        recipient_list = [
-            user.email for user in users if user.email
-        ]
+        try:
+            group = Group.objects.get(name=settings.PROFILE_HUMAN_RESOURCES)
+            users = group.user_set.all()
+            recipient_list = [
+                user.email for user in users if user.email
+            ]
+        except Group.DoesNotExist:
+            recipient_list = []
 
         # required because pyforms absolute URL includes BASE_URL, but admin doesn't
         if django.VERSION > (2, 0):
@@ -153,7 +155,7 @@ class ContractProposal(StatusModel):
 
         message_context = {
             'proposal_url': proposal_url,
-            'responsible': self.responsible.get_full_name,
+            'responsible': self.responsible.full_name,
         }
 
         subject = 'New contract proposal'
@@ -334,10 +336,10 @@ class ContractProposal(StatusModel):
 
             payout = Payout(
                 contract=new_contract,
-                financeproject=payment.financeproject,
-                payout_amount=payment.payment_amount,
-                payout_start=proposal_start,
-                payout_end=proposal_end,
+                project=payment.project,
+                amount=payment.amount,
+                start=proposal_start,
+                end=proposal_end,
             )
             payout.save(user=kwargs.get('user', None))
 

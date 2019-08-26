@@ -77,20 +77,20 @@ class HeadcountsReports(BaseWidget):
     
         qs = Payout.objects.all()
 
-        if start: qs = qs.filter(payout_start__gte=start)
-        if end:   qs = qs.filter(payout_end__lte=end)
+        if start: qs = qs.filter(start__gte=start)
+        if end:   qs = qs.filter(end__lte=end)
 
         if self._groups.value:
-            qs = qs.filter(financeproject__costcenter__group__in=self._groups.value)
+            qs = qs.filter(project__costcenter__group__in=self._groups.value)
         
         if self._costcenters.value:
-            qs = qs.filter(financeproject__costcenter__in=self._costcenters.value)
+            qs = qs.filter(project__costcenter__in=self._costcenters.value)
 
         if self._projects.value:
-            qs = qs.filter(financeproject__in=self._projects.value)
+            qs = qs.filter(project__in=self._projects.value)
 
 
-        #qs.order_by('person', 'contract__contract_start', 'financeproject__costcenter__costcenter_code', 'financeproject__financeproject_code','payout_start')
+        #qs.order_by('person', 'contract__contract_start', 'project__costcenter__costcenter_code', 'financeproject__project_code','payout_start')
 
         return qs
 
