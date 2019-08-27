@@ -27,8 +27,8 @@ def create_proposal(contract, motive, responsible):
         start=contract.start,
         months_duration=contract.months_duration,
         days_duration=contract.days_duration,
-        contractproposal_salary=contract.salary,
-        contractproposal_scientificdesc=contract.description,
+        salary=contract.salary,
+        scientificdesc=contract.description,
         fellowship_type=contract.fellowship_type,
         position=contract.position,
     )

@@ -90,8 +90,8 @@ class CreateContractProposalFormWidget(ModelFormWidget):
     def __update_end_date(self):
 
         try:
-            days = 0 if not self.contractproposal_duration_additional_days.value else self.contractproposal_duration_additional_days.value
-            self.end_date.value = (self.contractproposal_start.value.date() + relativedelta(months=self.contractproposal_duration.value, days=days) - timedelta(days=1))
+            days = 0 if not self.days_duration.value else self.days_duration.value
+            self.end_date.value = (self.start.value.date() + relativedelta(months=self.months_duration.value, days=days) - timedelta(days=1))
         except:
             self.end_date.value = ''
 

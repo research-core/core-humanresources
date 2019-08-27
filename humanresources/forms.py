@@ -25,11 +25,11 @@ class ContractProposalForm(forms.ModelForm):
             for i in range(0, int(self.data['payment_set-TOTAL_FORMS']))
         ])
 
-        salary = cleaned_data.get('contractproposal_salary', Decimal(0.00))
+        salary = cleaned_data.get('salary', Decimal(0.00))
 
         if salary != total_payouts:
             msg = 'The payouts specified do not cover this value'
-            raise ValidationError({'contractproposal_salary': msg})
+            raise ValidationError({'salary': msg})
 
 
 class NewHireForm(ContractProposalForm):
@@ -46,9 +46,9 @@ class NewHireForm(ContractProposalForm):
         self.helper.layout = Layout(
             Fieldset(
                 'Tell us your favorite stuff {{ username }}',
-                'contractproposal_createdon',
-                'contractproposal_start',
-                'contractproposal_duration',
+                'createdon',
+                'start',
+                'duration',
                 'favorite_food',
                 HTML("""
                     <p>We use notes to get better, <strong>please help us {{ username }}</strong></p>

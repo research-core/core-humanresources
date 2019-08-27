@@ -101,7 +101,7 @@ class ContractEditFormWidget(ModelFormWidget):
         'start',
         'end',
         'description',
-        'contract_salary',
+        'salary',
         'position',
         'fellowship_type',
         'fellowship_ref',

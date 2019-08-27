@@ -102,13 +102,13 @@ class ProposalQuerySet(models.QuerySet):
 
                 # Add the group users
                 filters.add(Q(
-                    person__groupmember__date_joined__lte=F('contractproposal_start'),
-                    person__groupmember__date_left__gte=F('contractproposal_start'),
+                    person__groupmember__date_joined__lte=F('start'),
+                    person__groupmember__date_left__gte=F('start'),
                     person__groupmember__group__in=groups_withaccess,
                     person__in=persons
                 ), Q.OR)
                 filters.add(Q(
-                    person__groupmember__date_joined__lte=F('contractproposal_start'),
+                    person__groupmember__date_joined__lte=F('start'),
                     person__groupmember__date_left__isnull=True,
                     person__groupmember__group__in=groups_withaccess,
                     person__in=persons
