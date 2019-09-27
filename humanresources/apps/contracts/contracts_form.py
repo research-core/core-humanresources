@@ -18,7 +18,7 @@ class FilesFormWidget(ModelFormWidget):
 
     def create_newobject(self):
         obj = super().create_newobject()
-        obj.createdby = PyFormsMiddleware.user()
+        obj.created_by = PyFormsMiddleware.user()
         return obj
 
 
