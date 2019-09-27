@@ -26,7 +26,7 @@ class FilesInline(ModelAdminWidget):
     MODEL = ContractFile
     TITLE = 'Contract file'
 
-    LIST_DISPLAY = ['contractfile_file', 'contractfile_createdon']
+    LIST_DISPLAY = ['file', 'created_on']
 
     EDITFORM_CLASS = FilesFormWidget
 
