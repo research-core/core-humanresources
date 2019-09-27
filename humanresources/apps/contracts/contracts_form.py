@@ -14,7 +14,7 @@ from .payout_list import PayoutInline
 class FilesFormWidget(ModelFormWidget):
     MODEL = ContractFile
     TITLE = 'Edit contract file'
-    FIELDSETS = ['contractfile_file']
+    FIELDSETS = ['file']
 
     def create_newobject(self):
         obj = super().create_newobject()
