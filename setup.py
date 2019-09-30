@@ -36,5 +36,6 @@ setup(
         'core-people',
         'core-finance',
         'core-permissions',
-    ]
+    ],
+    package_data={ 'humanresources': ['templates/*.html', 'templates/emails/*.html', 'templates/emails/*.txt', 'templates/pdfs/*.html'] },
 )
